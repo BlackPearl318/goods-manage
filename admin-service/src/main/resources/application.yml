@@ -1,0 +1,25 @@
+server:
+  port: 54321
+
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/admins?useServerPrepStmts=true
+    username: root
+    password: 123456
+    type: com.alibaba.druid.pool.DruidDataSource
+
+
+
+feign:
+  httpclient:
+    enabled: true #将feign的底层实现更改为httpclient
+    max-connections: 200 #最大连接数
+    max-connections-per-route: 50 #每个路径的最大连接数
+
+
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl #mybatis日志打印

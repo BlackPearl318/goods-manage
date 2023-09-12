@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>用户登录</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+
+    <style>
+
+        .el-menu-vertical-demo:not(.el-menu--collapse) {
+            width: 200px;
+            min-height: 400px;
+        }
+
+        body{
+            padding: 0;
+            margin: 0;
+        }
+
+        img{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        #login{
+            position: relative;
+            left: 1100px;
+            top: 150px;
+            width: 20%;
+            height: 20%;
+        }
+
+        .el-input{
+            transition: 0.5s;
+            box-shadow: 0 0 5px #eee;
+            border-radius: 5px;
+            display: block;
+        }
+
+        .el-dialog{
+            transition: 0.5s;
+            box-shadow: 0 0 5px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+
+
+    </style>
+
+
+</head>
+
+<body>
+
+<img src="http://localhost:8080/goods-manage/admin-service/org/example/img/background1.png"/>
+
+<div id="admin">
+
+
+<div id="login">
+
+    <!-- 表单验证时需要使:model和ref同时存在且属性相同-->
+    <el-form :model="ruleForm" :rules="rulesLogin" ref="ruleForm">
+
+        <!-- required: true, message: '请输入账号',trigger: 'blur',pattern:/^\d{9}$/,trigger:'blur'-->
+        <el-form-item prop="account">
+            <el-input v-model="ruleForm.account" :placeholder="newAdmin.account" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item prop="password">
+            <el-input type="password" placeholder="请输入密码" v-model="ruleForm.password" autocomplete="off"></el-input>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="primary" @click="login('ruleForm')" style="
+            width: 100%;
+            background-image: linear-gradient(to right, #00c6ff 0%, #0072ff  51%, #00c6ff  100%);
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 5px #eee;
+            border-radius: 10px;">登录</el-button>
+        </el-form-item>
+        <el-form-item>
+            <el-button type="success" @click="addVisible = true" style="
+            width: 30%;
+            background-image: linear-gradient(to right, #C9FFBF 0%, #FFAFBD  51%, #C9FFBF  100%);
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 5px #eee;
+            border-radius: 10px;">注册账号</el-button>
+            <el-button type="warning" @click="updateVisible = true" style="
+            width: 30%;
+            background-image: linear-gradient(to right, #DAE2F8 0%, #D6A4A4  51%, #DAE2F8  100%);
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 5px #eee;
+            border-radius: 10px;">找回密码</el-button>
+            <el-button type="info" @click="findVisible = true" style="
+            width: 30%;
+            background-image: linear-gradient(to right, #757F9A 0%, #D7DDE8  51%, #757F9A  100%);
+            text-align: center;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 5px #eee;
+            border-radius: 10px;">检测账号</el-button>
+        </el-form-item>
+
+    </el-form>
+
+</div>
+
+
+    <!-- element标签的属性必须加: 如:(:append-to-body) -->
+    <el-dialog title="用户注册" :visible.sync="addVisible" :append-to-body="true" >
+
+        <!-- 注册用表单-->
+        <el-form :model="newAdmin" status-icon :rules="rules" ref="newAdmin">
+            <el-form-item prop="phoneNumber" :label-width="formLabelWidth">
+                <el-input placeholder="请输入手机号" v-model="newAdmin.phoneNumber" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item prop="password" :label-width="formLabelWidth">
+                <el-input type="password" placeholder="请输入密码" v-model="newAdmin.password" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item prop="password2" :label-width="formLabelWidth">
+                <el-input type="password" placeholder="请再输入一次密码" v-model="newAdmin.password2" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item prop="aName" :label-width="formLabelWidth">
+                <el-input placeholder="请输入用户名" v-model="newAdmin.aName" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item :label-width="formLabelWidth">
+                <el-button type="primary" @click="register('newAdmin')" style="width: 48.89999%">注 册</el-button>
+                <el-button @click="registerCancel" style="width: 48.89999%">取 消</el-button>
+            </el-form-item>
+        </el-form>
+
+    </el-dialog>
+
+
+    <el-dialog title="找回密码" :visible.sync="updateVisible" :append-to-body="true">
+
+        <!-- 找回用表单-->
+        <el-form :model="updateAdmin" status-icon :rules="updateRules" ref="updateAdmin">
+            <el-form-item prop="oldPhoneNumber" :label-width="formLabelWidth">
+                <el-input placeholder="请输入手机号" v-model="updateAdmin.oldPhoneNumber" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item prop="newPassword" :label-width="formLabelWidth">
+                <el-input placeholder="请输入新密码" type="password" v-model="updateAdmin.newPassword" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item prop="newPassword2" :label-width="formLabelWidth">
+                <el-input placeholder="请再输入一次新密码" type="password" v-model="updateAdmin.newPassword2" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item :label-width="formLabelWidth">
+                <el-button type="primary" @click="back('updateAdmin')" style="width: 48.89999%">提 交</el-button>
+                <el-button @click="backCancel" style="width: 48.89999%">取 消</el-button>
+            </el-form-item>
+        </el-form>
+
+    </el-dialog>
+
+    <el-dialog title="查询账号" :visible.sync="findVisible" :append-to-body="true">
+
+        <!-- 查找用表单-->
+        <el-form :model="findAdmin" status-icon :rules="findRules" ref="findAdmin">
+            <el-form-item prop="phoneNumber" :label-width="formLabelWidth">
+                <el-input placeholder="请输入手机号" v-model="findAdmin.phoneNumber" autocomplete="off"></el-input>
+            </el-form-item>
+            <el-form-item :label-width="formLabelWidth">
+                <el-button type="primary" @click="findAdm('findAdmin')" style="width: 48.89999%">查 找</el-button>
+                <el-button @click="findAdminCancel" style="width: 48.89999%">取 消</el-button>
+            </el-form-item>
+        </el-form>
+
+    </el-dialog>
+
+
+</div>
+
+
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    //允许跨域请求使用凭证
+    axios.defaults.withCredentials=true;
+
+    var vue = new Vue({
+        //绑定
+        el: '#admin',
+        //数据
+        data: {
+            tableData: [],
+            src: 'background1.jpg',
+            ruleForm: {
+                account: '',
+                password: '',
+            },
+
+            admin: {
+                account: '',
+                aId: '',
+                aName: '',
+                aPhone: '',
+                aTime:'',
+                aPassword:'',
+            },
+
+            newAdmin: {
+                account: '请输入账号',
+                phoneNumber: '',
+                password: '',
+                password2: '',
+                aName: ''
+            },
+            addVisible: false,
+
+            updateAdmin: {
+                oldPhoneNumber: '',
+                newPassword: '',
+                newPassword2: '',
+            },
+            updateVisible: false,
+
+            findAdmin:{
+                account: '',
+                phoneNumber: '',
+            },
+            findVisible : false,
+
+            //登录时的验证
+            rulesLogin: {
+                account: [{required: true, message: '请输入账号'},
+                    {pattern: /^\d{9}$/, message: '账号为9位数字'}],
+                password: [{required: true, message: '请输入密码'},
+                    {pattern: /^[0-9a-zA-Z]{6,9}$/, message: '密码为字母和数字组合长度为6-9位'}]
+            },
+
+            //修改时的验证
+            updateRules: {
+                oldPhoneNumber: [{
+                    required: true, message: '请输入手机号'
+                }, {
+                    pattern: /^[1][3,4,5,5,7,9][0-9]{9}$/, message: '请输入正确的手机号'
+                }],
+                newPassword: [{
+                    required: true, message: '请输入新密码'
+                }, {
+                    pattern: /^[0-9a-zA-Z]{6,9}$/, message: '密码为字母和数字组合长度为6-9位'
+                }],
+                newPassword2: [{
+                    required: true, message: '请确认新密码'
+                }, {
+                    pattern: /^[0-9a-zA-Z]{6,9}$/, message: '密码为字母和数字组合长度为6-9位'
+                }]
+
+            },
+
+            //注册时的验证
+            rules: {
+                phoneNumber: [{
+                    required: true, message: '请输入手机号'
+                }, {
+                    pattern: /^[1][3,4,5,5,7,9][0-9]{9}$/, message: '请输入正确的手机号'
+                }],
+
+                password: [{
+                    required: true, message: '请输入密码'
+                }, {
+                    pattern: /^[0-9a-zA-Z]{6,9}$/, message: '密码为字母和数字组合长度为6-9位'
+                }],
+
+                password2: [{
+                    required: true, message: '请再输入一次密码'
+                }, {
+                    pattern: /^[0-9a-zA-Z]{6,9}$/, message: '密码为字母和数字组合长度为6-9位'
+                }],
+
+                aName: [{
+                    required: true, message: '请输入用户名'
+                }, {
+                    pattern: /^[^0]{1,6}$/, message: '用户名过长'
+                }]
+
+            },
+
+            //查找时使用
+            findRules:{
+                phoneNumber:[{
+                    required: true, message: '请输入手机号'
+                },{
+                    pattern: /^[1][3,4,5,5,7,9][0-9]{9}$/, message: '请输入正确的手机号'
+                }]
+            }
+
+        },
+
+
+        //钩子函数，在创建vue对象时自动调用
+        created() {
+            this.autoLogin();
+        },
+
+        methods: {
+
+            findAdminCancel(){
+                this.findVisible=false;
+                this.findAdmin.phoneNumber='';
+            },
+
+            findAdm(formName){
+
+                this.$refs[formName].validate((valid) => {
+                    if(valid){
+
+                        axios.get('http://localhost:10110/admins/selectByPhone/'+this.findAdmin.phoneNumber)
+                            .then((response) => {
+
+                                if(response.data.flag){
+                                    this.findAdmin.account=response.data.data;
+                                    this.$message({
+                                        type: 'success',
+                                        message: '您的账号为:' + this.findAdmin.account,
+                                    });
+                                }else{
+                                    this.$message({
+                                        type: 'info',
+                                        message: '暂无此用户',
+                                    });
+                                }
+
+                                this.findVisible=false;
+                                this.findAdmin.phoneNumber='';
+
+                            });
+
+                    }else{
+                        this.$message.error("请完善相关信息");
+                        return false;
+                    }
+                });
+
+
+            },
+
+            registerCancel() {
+                this.newAdmin.phoneNumber = '';
+                this.newAdmin.password = '';
+                this.newAdmin.password2 = '';
+                this.newAdmin.aName = '';
+                this.addVisible = false;
+            },
+
+            register(formName) {
+
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+
+                        if (this.newAdmin.password !== this.newAdmin.password2) {
+                            this.$message.error("两次密码不一致！请重新输入");
+                            this.newAdmin.password = '';
+                            this.newAdmin.password2 = '';
+                            return false;
+                        } else {
+
+                            let params = new URLSearchParams();
+                            params.append("phoneNumber", this.newAdmin.phoneNumber);
+                            params.append("password", this.newAdmin.password);
+                            params.append("password2", this.newAdmin.password2);
+                            params.append("aName", this.newAdmin.aName);
+
+                            axios.post('http://localhost:10110/admins/register', params)
+                                .then((response) => {
+
+                                    if (response.data.flag) {
+                                        this.newAdmin.account = response.data.data;
+                                        this.$message({
+                                            type: 'success',
+                                            message: '注册成功!您的账号为:' + this.newAdmin.account,
+                                        });
+                                        this.addVisible = false;
+                                    } else {
+                                        this.$message({
+                                            type: 'info',
+                                            message: '手机号已被注册，请选择登录或者找回密码',
+                                        });
+                                        this.addVisible = false;
+                                    }
+
+                                    this.newAdmin.phoneNumber = '';
+                                    this.newAdmin.password = '';
+                                    this.newAdmin.password2 = '';
+                                    this.newAdmin.aName = '';
+
+                                });
+
+                        }
+
+                    } else {
+                        this.$message.error("请完善相关信息");
+                        return false;
+                    }
+
+                });
+
+            },
+
+            backCancel() {
+                this.updateVisible = false;
+
+                this.updateAdmin.oldPhoneNumber = '';
+                this.updateAdmin.newPassword = '';
+                this.updateAdmin.newPassword2 = '';
+                },
+
+            back(formName) {
+
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+
+                        if (this.updateAdmin.newPassword !== this.updateAdmin.newPassword2) {
+                            this.$message.error("两次密码不一致！请重新输入");
+                            this.updateAdmin.newPassword = '';
+                            this.updateAdmin.newPassword2 = '';
+                            return false;
+                        } else {
+
+                            let params = new URLSearchParams();
+                            params.append("phoneNumber", this.updateAdmin.oldPhoneNumber);
+                            params.append("newPassword", this.updateAdmin.newPassword);
+                            params.append("newPassword2", this.updateAdmin.newPassword2);
+
+                            axios.put('http://localhost:10110/admins/backAdminPassword', params)
+                                .then((response) => {
+
+                                    if (response.data.flag) {
+                                        this.$message({
+                                            type: 'success',
+                                            message: '修改成功',
+                                        });
+                                        this.updateVisible = false;
+                                    } else {
+                                        this.$message({
+                                            type: 'info',
+                                            message: '手机号或密码有误,请重新输入',
+                                        });
+                                        this.updateVisible = false;
+                                    }
+
+                                    this.updateAdmin.oldPhoneNumber = '';
+                                    this.updateAdmin.newPassword = '';
+                                    this.updateAdmin.newPassword2 = '';
+                                });
+
+                        }
+
+                    } else {
+                        this.$message.error("请完善相关信息");
+                        return false;
+                    }
+
+                });
+
+
+            },
+
+            async loginBase(){
+                //使用URLSearchParams传post请求参数
+                let params = new URLSearchParams();
+                params.append("account", this.ruleForm.account);
+                params.append("password", this.ruleForm.password);
+
+                let response= await axios.post('http://localhost:10110/admins/login', params);
+                if (response.data.flag) {
+                    this.$message({
+                        type: 'success',
+                        message: response.data.info
+                    });
+                    //获取登录的用户信息
+                    this.admin.aId = response.data.data.aid;
+                    this.admin.account = response.data.data.aaccount;
+                    this.admin.aName = response.data.data.aname;
+                    this.admin.aPhone = response.data.data.aphone;
+                    this.admin.aTime = response.data.data.atime;
+                    this.admin.aPassword=response.data.data.apassword;
+
+                    //将信息保存到sessionStorage
+                    sessionStorage.setItem("aId", this.admin.aId);
+                    sessionStorage.setItem("account", this.admin.account);
+                    sessionStorage.setItem("aName", this.admin.aName);
+                    sessionStorage.setItem("aPhone", this.admin.aPhone);
+                    sessionStorage.setItem("aTime",this.admin.aTime);
+                    sessionStorage.setItem("aPassword",this.admin.aPassword);
+                    //跳转页面
+                    this.ruleForm.account='';
+                    this.ruleForm.password='';
+                    window.location.href = 'http://localhost:8080/goods-manage/goods-service/org/example/static/show-goods1.html'
+                } else {
+                    this.$message({
+                        type: 'info',
+                        message: response.data.info,
+                    });
+                }
+
+            },
+
+
+            async login(formName) {
+                //校验表单数据
+                this.$refs[formName].validate((valid) => {
+                    if (valid) {
+                        this.loginBase();
+                    } else {
+                        this.$message.error("请完善相关信息");
+                        return false;
+                    }
+                });
+
+
+            },
+
+            async autoLogin(){
+                //自动登录
+                let response= await axios.post('http://localhost:10110/admins/autoLogin');
+                if (response.data.flag) {
+                    this.$message({
+                        type: 'success',
+                        message: response.data.info
+                    });
+                    //获取登录的用户信息
+                    this.admin.aId = response.data.data.aid;
+                    this.admin.account = response.data.data.aaccount;
+                    this.admin.aName = response.data.data.aname;
+                    this.admin.aPhone = response.data.data.aphone;
+                    this.admin.aTime = response.data.data.atime;
+                    this.admin.aPassword=response.data.data.apassword;
+
+                    //将信息保存到sessionStorage
+                    sessionStorage.setItem("aId", this.admin.aId);
+                    sessionStorage.setItem("account", this.admin.account);
+                    sessionStorage.setItem("aName", this.admin.aName);
+                    sessionStorage.setItem("aPhone", this.admin.aPhone);
+                    sessionStorage.setItem("aTime",this.admin.aTime);
+                    sessionStorage.setItem("aPassword",this.admin.aPassword);
+                    //跳转页面
+                    window.location.href = 'http://localhost:8080/goods-manage/goods-service/org/example/static/show-goods1.html'
+                } else {
+                    this.$message({
+                        type: 'info',
+                        message: response.data.info,
+                    });
+                }
+
+
+
+            },
+
+
+        }
+
+    })
+
+
+
+
+</script>
+
+
+
+</html>

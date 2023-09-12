@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户信息</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+
+        .text {
+            font-size: 14px;
+        }
+
+        .item {
+            margin-bottom: 18px;
+        }
+
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: "";
+        }
+        .clearfix:after {
+            clear: both
+        }
+
+        .box-card {
+            width: 680px;
+        }
+
+        .el-input{
+            transition: 0.5s;
+            box-shadow: 0 0 20px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-form{
+            width: 50%;
+            transition: 0.5s;
+            border-radius: 10px;
+            display: block;
+        }
+
+
+        .el-header {
+            background-color: #f0f9eb;
+            line-height: 60px;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 5px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-aside {
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 10px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-menu{
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 20px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-avatar{
+            transition: 0.5s;
+            background-size: 200% auto;
+            box-shadow: 0 0 20px #eee;
+            display: block;
+            color: #333;
+        }
+
+        img{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+
+    </style>
+</head>
+
+
+
+<body>
+
+<img src="http://localhost:8080/goods-manage/admin-service/org/example/img/background2.png"/>
+
+<div id="addGood">
+
+    <el-container style="height: 100%;">
+
+        <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+            <el-menu :default-openeds="['2','3']"
+                     background-color="#48505a"
+                     text-color="#fff"
+                     active-text-color="#ffd04b">
+                <el-menu-item index="4">
+                    <i class="el-icon-s-home"></i>
+                    <span slot="title" @click="backLogin">返回登录界面</span>
+                </el-menu-item>
+                <el-submenu index="2">
+                    <template slot="title"><i class="el-icon-back"></i>返回</template>
+                    <el-menu-item-group>
+                        <el-menu-item index="2-1" @click="back">返回上一页</el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group>
+                        <el-menu-item index="2-2" @click="back">返回仓库管理</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+                <el-submenu index="3">
+                    <template slot="title">
+                        <i class="el-icon-minus"></i>
+                        <i class="el-icon-minus"></i>
+                        <i class="el-icon-minus"></i>
+                        <i class="el-icon-minus"></i>
+                    </template>
+                    <el-menu-item-group>
+                        <template slot="title"></template>
+                        <el-menu-item index="3-1">
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group>
+                        <el-menu-item index="3-2">
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                        </el-menu-item>
+                        <el-menu-item index="3-3">
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                        </el-menu-item>
+                        <el-menu-item index="3-4">
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                        </el-menu-item>
+                        <el-menu-item index="3-5">
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                        </el-menu-item>
+                        <el-menu-item index="3-6">
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                        </el-menu-item>
+                        <el-menu-item index="3-7">
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                        </el-menu-item>
+                        <el-menu-item index="3-8">
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+
+
+        <el-container style="height: 100%;">
+
+            <el-header style="text-align: right; font-size: 15px">
+
+                <el-menu class="el-menu-demo"
+                         mode="horizontal"
+                         text-color="#fff"
+                         background-color="#545c64"
+                         active-text-color="#ffd04b">
+
+                    <i class="el-icon-s-tools" style="margin-right: 15px;color: #f0f9eb"></i>
+                    <i class="el-icon-minus" style="margin-right: 15px;color: #f0f9eb"></i>
+                    <span style="color: #f0f9eb">当前用户：{{name}}</span>
+                    <i class="el-icon-user-solid" style="margin-right: 15px;color: #f0f9eb"></i>
+                    <i class="el-icon-minus" style="margin-right: 15px;color: #f0f9eb"></i>
+
+                </el-menu>
+
+            </el-header>
+
+            <el-main>
+
+                <!-- 添加用表单-->
+                <el-form :model="addGoodInfo" status-icon :rules="addGoodInfoRules" ref="addGoodInfo" style="position: relative;width: 50%">
+                    <el-form-item :label-width="formLabelWidth" prop="gName">
+                        <div class="demo-type">
+                            <div align="center">
+                                <el-avatar icon="el-icon-box"></el-avatar>
+                            </div>
+                        </div>
+                        <el-input v-model="addGoodInfo.gName" autocomplete="off" placeholder="商品名"></el-input>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth" prop="gBrand">
+                        <el-input v-model="addGoodInfo.gBrand" autocomplete="off" placeholder="品牌"></el-input>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth" prop="gPrice">
+                        <el-input v-model="addGoodInfo.gPrice" autocomplete="off" placeholder="单价"></el-input>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth" prop="gNumber">
+                        <el-input v-model="addGoodInfo.gNumber" autocomplete="off" placeholder="库存量"></el-input>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth" prop="gFrom">
+                        <el-input v-model="addGoodInfo.gFrom" autocomplete="off" placeholder="来源"></el-input>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth">
+                        <el-col :span="11">
+                            <el-date-picker type="datetime" placeholder="时间" v-model="addGoodInfo.gTime" value-format="yyyy-MM-dd HH:mm:ss" style="width: 218.5%"></el-date-picker>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth">
+                        <el-button style="width:48.8%;
+                                   background-image: linear-gradient(to right, #E55D87 0%, #5FC3E4  51%, #E55D87  100%);text-align: center;
+                                   text-transform: uppercase;
+                                   transition: 0.5s;
+                                   background-size: 200% auto;
+                                   color: white;
+                                   box-shadow: 0 0 10px #eee;
+                                   border-radius: 10px;" type="primary" @click="addInfo('addGoodInfo')">添 加</el-button>
+                        <el-button style="width: 48.8%;
+                                   background-image: linear-gradient(to right, #00c6ff 0%, #0072ff  51%, #00c6ff  100%);
+                                   text-align: center;
+                                   text-transform: uppercase;
+                                   transition: 0.5s;
+                                   background-size: 200% auto;
+                                   color: white;
+                                   box-shadow: 0 0 10px #eee;
+                                   border-radius: 10px;" @click="addInfoCancel">取 消</el-button>
+                    </el-form-item>
+                </el-form>
+
+
+            </el-main>
+
+        </el-container>
+
+
+
+
+    </el-container>
+
+
+
+
+
+
+
+
+</div>
+
+
+
+
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+<script>
+    //允许跨域请求使用凭证
+    axios.defaults.withCredentials=true;
+
+
+    var vu = new Vue({
+        el:'#addGood',
+        data:{
+
+            name:sessionStorage.getItem('aName'),
+
+            addGoodVisible:'false',
+
+            addGoodInfo:{
+                gName:'',
+                gBrand:'',
+                gPrice:'',
+                gNumber:'',
+                gFrom:'',
+                gTime:'',
+            },
+            addGoodInfoRules:{
+                gName:[{
+                    message: '请输入商品名'
+                },{
+                    pattern: /^[^0]{1,12}$/, message: '商品名过长'
+                }],
+                gBrand:[{
+                    message: '请输入品牌名'
+                },{
+                    pattern: /^[^0]{1,15}$/, message: '品牌名过长'
+                }],
+                gPrice:[{
+                    message: '请输入单价'
+                },{
+                    pattern: /^[1-9][0-9]{0,3}([\.][0-9]{1,2})?$/, message: '数字格式有误'
+                }],
+                gNumber:[{
+                    message: '请输入库存量'
+                },{
+                    pattern: /^[1-9][0-9]{0,8}$/, message: '数字格式有误或数字过大'
+                }],
+                gFrom:[{
+                    message: '请输入商品来源'
+                },{
+                    pattern: /^[^0]{1,30}$/, message: '商品来源名称过长'
+                }]
+            },
+
+        },
+
+
+        created(){
+            if(this.checkCookie() === false){
+                window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            }
+            this.addGoodVisible=sessionStorage.getItem('addGoodVisible')
+            if(this.addGoodVisible === 'false'){
+                window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            }else if(this.addGoodVisible === 'true'){
+                this.addGoodVisible = 'false';
+            }else{
+                window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            }
+        },
+
+
+        methods:{
+
+            //如果cookie不存在则重新登录
+            async checkCookie(){
+                let response=await axios.post('http://localhost:10110/admins/checkCookieExist');
+                if(response.data.flag === false){
+                    window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+                }
+            },
+
+
+            addInfoCancel(){
+                this.addGoodInfo.gName='';
+                this.addGoodInfo.gBrand='';
+                this.addGoodInfo.gPrice='';
+                this.addGoodInfo.gNumber='';
+                this.addGoodInfo.gFrom='';
+                this.addGoodInfo.gTime='';
+            },
+
+            addInfo(formName){
+
+                this.$refs[formName].validate((valid) => {
+                    if(valid){
+
+                        // good={
+                        //     gName:this.addGoodInfo.gName,
+                        //     gBrand:this.addGoodInfo.gBrand,
+                        //     gPrice:this.addGoodInfo.gPrice,
+                        //     gNumber:this.addGoodInfo.gNumber,
+                        //     gFrom:this.addGoodInfo.gFrom,
+                        //     gTime:this.addGoodInfo.gTime,
+                        //     aId:sessionStorage.getItem('aId')
+                        // };
+
+                        axios.post('http://localhost:10110/goods/addOne',{
+                            gName:this.addGoodInfo.gName,
+                            gBrand:this.addGoodInfo.gBrand,
+                            gPrice:this.addGoodInfo.gPrice,
+                            gNumber:this.addGoodInfo.gNumber,
+                            gFrom:this.addGoodInfo.gFrom,
+                            gTime:this.addGoodInfo.gTime,
+                            aId:sessionStorage.getItem('aId')
+                        })
+                            .then((response)=> {
+
+                                if(response.data.flag){
+                                    this.$message({
+                                        type: 'success',
+                                        message: '添加成功!'
+                                    });
+                                }else{
+                                    this.$message({
+                                        type: 'info',
+                                        message: '添加失败',
+                                    });
+                                }
+                                //添加完成后将表单数据清空
+                                this.addGoodInfo.gName='';
+                                this.addGoodInfo.gBrand='';
+                                this.addGoodInfo.gPrice='';
+                                this.addGoodInfo.gNumber='';
+                                this.addGoodInfo.gFrom='';
+                                this.addGoodInfo.gTime='';
+                            });
+
+                    }else{
+                        this.$message.error("请完善相关信息");
+                        return false;
+                    }
+                });
+
+            },
+
+            back(){
+                window.location.href='http://localhost:8080/goods-manage/goods-service/org/example/static/show-goods1.html';
+                this.addGoodVisible = 'false';
+            },
+
+            //不清除session
+            //同步调用
+            async backLogin(){
+                let params = new URLSearchParams();
+                params.append("aId", sessionStorage.getItem('aId'));
+                params.append("status", '0');
+
+                let response=await axios.post('http://localhost:10110/admins/backLogin', params);
+                if (response.data.flag){
+                    this.$message({
+                        type: 'success',
+                        message: '退出登录成功!'
+                    });
+                }else{
+                    this.$message({
+                        type: 'info',
+                        message: response.data.info,
+                    });
+                }
+
+                //返回登录界面
+                window.location.href='http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            },
+
+
+        }
+    });
+</script>
+</html>

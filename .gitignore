@@ -1,0 +1,6 @@
+# Project exclude paths
+/admin-client/target/
+/admin-service/target/
+/gateway/target/
+/goods-service/target/
+/result/target/

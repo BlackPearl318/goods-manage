@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>仓库管理</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+
+    <style>
+
+        .el-table{
+            transition: 0.5s;
+            box-shadow: 0 0 20px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-input{
+            transition: 0.5s;
+            box-shadow: 0 0 10px #eee;
+            border-radius: 10px;
+        }
+
+        .el-form{
+            transition: 0.5s;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-table-column{
+            transition: 0.5s;
+            box-shadow: 0 0 20px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-pagination{
+            transition: 0.5s;
+            box-shadow: 0 0 20px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-menu-vertical-demo:not(.el-menu--collapse) {
+            width: 200px;
+            min-height: 400px;
+        }
+
+        .el-header {
+            line-height: 60px;
+            box-shadow: 0 0 5px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-aside {
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            box-shadow: 0 0 10px #eee;
+            border-radius: 10px;
+            display: block;
+            color: #333;
+        }
+
+        .el-menu{
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            box-shadow: 0 0 20px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-avatar{
+            transition: 0.5s;
+            background-size: 200% auto;
+            box-shadow: 0 0 20px #eee;
+            display: block;
+            color: #333;
+        }
+
+
+        .el-table__body-wrapper::-webkit-scrollbar {
+            width: 0;
+            background: rgba(213,215,220,0.3);
+            border: none;
+         }
+        .el-table_body-wrapper::-webkit-scrollbar-track {
+            border: none;
+        }
+
+
+        .el-table th.gutter{
+            display: none;
+            width:0
+        }
+        .el-table colgroup col[name='gutter']{
+            display: none;
+            width: 0;
+        }
+        .el-table__body{
+            width: 100% !important;
+        }
+
+
+    </style>
+
+
+</head>
+
+<body>
+
+        <div id="app">
+
+
+            <el-container style="height: 100%;">
+
+                <el-aside width="200px" style="background-color: rgb(238, 241, 246);">
+                    <el-menu :default-openeds="['1', '2','5']"
+                             background-color="#48505a"
+                             text-color="#fff"
+                             active-text-color="#ffd04b">
+                        <el-menu-item index="4">
+                            <i class="el-icon-s-home"></i>
+                            <span slot="title" @click="rightBackMain">返回登录界面</span>
+                        </el-menu-item>
+                        <el-submenu index="1">
+                            <template slot="title"><i class="el-icon-user-solid"></i>用户设置</template>
+                            <el-menu-item-group>
+                                <template slot="title">信息</template>
+                                <el-menu-item index="1-1" @click="adminDetail">用户详情</el-menu-item>
+                            </el-menu-item-group>
+                            <el-menu-item-group title="编辑">
+                                <el-menu-item index="1-2" @click="rightBackMain">退出登录</el-menu-item>
+                                <el-menu-item index="1-3" @click="rightBackAccount">注销</el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                        <el-submenu index="2">
+                            <template slot="title"><i class="el-icon-s-tools"></i>个人商品管理</template>
+                            <el-menu-item-group>
+                                <template slot="title">个人商品信息编辑</template>
+                                <el-menu-item index="2-1" @click="showMyselfGoods">可操作的商品</el-menu-item>
+                                <el-menu-item index="2-2" @click="addGood">添加商品</el-menu-item>
+                                <el-menu-item index="2-3" @click="deleteAllByAid">清空个人商品信息</el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                        <el-submenu index="5">
+                            <template slot="title"><i class="el-icon-s-data"></i>数据可视化</template>
+                            <el-menu-item-group>
+                                <template slot="title">数据分析</template>
+                                <el-menu-item index="5-1">
+                                    <span slot="title" @click="gotoStatistics">数据统计</span>
+                                </el-menu-item>
+                                <el-menu-item index="5-2">
+                                    <i class="el-icon-minus"></i>
+                                    <i class="el-icon-minus"></i>
+                                    <i class="el-icon-minus"></i>
+                                </el-menu-item>
+                                <el-menu-item index="5-3">
+                                    <i class="el-icon-minus"></i>
+                                    <i class="el-icon-minus"></i>
+                                    <i class="el-icon-minus"></i>
+                                </el-menu-item>
+                                <el-menu-item index="5-4">
+                                    <i class="el-icon-minus"></i>
+                                    <i class="el-icon-minus"></i>
+                                    <i class="el-icon-minus"></i>
+                                </el-menu-item>
+                            </el-menu-item-group>
+                        </el-submenu>
+                    </el-menu>
+                </el-aside>
+
+
+
+                <el-container style="height: 100%;">
+
+                    <el-header style="text-align: right; font-size: 15px;">
+
+                        <el-menu :default-active="3"
+                                 class="el-menu-demo"
+                                 mode="horizontal"
+                                 text-color="#fff"
+                                 background-color="#545c64"
+                                 active-text-color="#ffd04b">
+
+                            <el-menu-item index="2" @click="showAllGoods">全部商品信息</el-menu-item>
+                            <el-submenu index="3">
+                                <template slot="title">全部商品排序</template>
+                                <el-menu-item index="3-1" @click="showAllGoodsSort('A')">仓储量升序</el-menu-item>
+                                <el-menu-item index="3-2" @click="showAllGoodsSort('B')">仓储量降序</el-menu-item>
+                                <el-menu-item index="3-3" @click="showAllGoodsSort('C')">单价升序</el-menu-item>
+                                <el-menu-item index="3-4" @click="showAllGoodsSort('D')">单价降序</el-menu-item>
+                                <el-menu-item index="3-5" @click="showAllGoodsSort('E')">时间升序</el-menu-item>
+                                <el-menu-item index="3-6" @click="showAllGoodsSort('F')">时间降序</el-menu-item>
+                            </el-submenu>
+                            <el-menu-item index="4" @click="showMyselfGoods">个人商品信息</el-menu-item>
+                            <el-submenu index="5">
+                                <template slot="title">个人商品排序</template>
+                                <el-menu-item index="5-1" @click="showAdminGoodsSort('a')">仓储量升序</el-menu-item>
+                                <el-menu-item index="5-2" @click="showAdminGoodsSort('b')">仓储量降序</el-menu-item>
+                                <el-menu-item index="5-3" @click="showAdminGoodsSort('c')">单价升序</el-menu-item>
+                                <el-menu-item index="5-4" @click="showAdminGoodsSort('d')">单价降序</el-menu-item>
+                                <el-menu-item index="5-5" @click="showAdminGoodsSort('e')">时间升序</el-menu-item>
+                                <el-menu-item index="5-6" @click="showAdminGoodsSort('f')">时间降序</el-menu-item>
+                            </el-submenu>
+                            <el-menu-item index="6" @click="exactFind">精确查找</el-menu-item>
+                            <i class="el-icon-s-tools" style="margin-right: 15px;color: #f0f9eb"></i>
+                            <i class="el-icon-minus" style="margin-right: 15px;color: #f0f9eb"></i>
+                            <span style="color: #f0f9eb">当前用户：{{adminInter.aName}}</span>
+                            <i class="el-icon-user-solid" style="margin-right: 15px;color: #f0f9eb"></i>
+                            <i class="el-icon-minus" style="margin-right: 15px;color: #f0f9eb"></i>
+
+                        </el-menu>
+
+                    </el-header>
+
+                    <el-main>
+
+                        <!-- 条件查询-->
+                        <el-form :inline="true" :model="selectData" status-icon :rules="selectRules" ref="selectData" v-show="v1">
+                            <el-form-item :label-width="formLabelWidth" >
+                                <div class="demo-type">
+                                    <el-avatar icon="el-icon-zoom-in"></el-avatar>
+                                </div>
+                            </el-form-item>
+                            <el-form-item prop="gPriceDown" :label-width="formLabelWidth" style="width:8%">
+                                <el-input v-model="selectData.gPriceDown" placeholder="最小单价" autocomplete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item prop="gPriceUp" :label-width="formLabelWidth" style="width:8%">
+                                <el-input v-model="selectData.gPriceUp" placeholder="最大单价" autocomplete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item prop="gNumberDown" :label-width="formLabelWidth" style="width:8.5%">
+                                <el-input v-model="selectData.gNumberDown" placeholder="最小库存量" autocomplete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item prop="gNumberUp" :label-width="formLabelWidth" style="width:8.5%">
+                                <el-input v-model="selectData.gNumberUp" placeholder="最大库存量" autocomplete="off"></el-input>
+                            </el-form-item>
+                            <el-form-item prop="gBrand" :label-width="formLabelWidth" style="width:8%">
+                                <el-input v-model="selectData.gBrand" placeholder="品牌" autocomplete="off" ></el-input>
+                            </el-form-item>
+                            <el-form-item prop="gFrom" :label-width="formLabelWidth" style="width:8%">
+                                <el-input v-model="selectData.gFrom" placeholder="来源" autocomplete="off"></el-input>
+                            </el-form-item>
+
+                            <el-date-picker type="datetime" placeholder="选择最远日期" v-model="selectData.gTimeUp" value-format="yyyy-MM-dd HH:mm:ss" style="width:12.45%"></el-date-picker>
+                            <el-date-picker type="datetime" placeholder="选择最近日期" v-model="selectData.gTimeDown" value-format="yyyy-MM-dd HH:mm:ss" style="width:12.45%"></el-date-picker>
+
+                            <el-button type="primary" @click="sub('selectData')" style="
+                                       background-image: linear-gradient(to right, #E55D87 0%, #5FC3E4  51%, #E55D87  100%);text-align: center;
+                                       text-transform: uppercase;
+                                       transition: 0.5s;
+                                       background-size: 200% auto;
+                                       color: white;
+                                       box-shadow: 0 0 10px #eee;
+                                       border-radius: 10px;">查 询</el-button>
+                            <el-button  @click="clear" style="
+                                       background-image: linear-gradient(to right, #00c6ff 0%, #0072ff  51%, #00c6ff  100%);
+                                       text-align: center;
+                                       text-transform: uppercase;
+                                       transition: 0.5s;
+                                       background-size: 200% auto;
+                                       color: white;
+                                       box-shadow: 0 0 10px #eee;
+                                       border-radius: 10px;">清 空</el-button>
+                        </el-form>
+
+
+                        <!-- 条件查询-->
+                        <el-form :inline="true" :model="selectData2" status-icon :rules="selectRules" ref="selectData2" v-show="v2" style="position: relative;width: 36.5%;left: 30%;">
+                            <el-form-item :label-width="formLabelWidth" >
+                                <div class="demo-type">
+                                    <el-avatar icon="el-icon-zoom-in"></el-avatar>
+                                </div>
+                            </el-form-item>
+
+                            <el-form-item prop="gName" :label-width="formLabelWidth" >
+                                <el-input v-model="selectData2.gName" placeholder="商品名" autocomplete="off"></el-input>
+                            </el-form-item>
+
+                            <el-button type="primary" @click="sub('selectData2')"
+                                       style="
+                                       background-image: linear-gradient(to right, #E55D87 0%, #5FC3E4  51%, #E55D87  100%);text-align: center;
+                                       text-transform: uppercase;
+                                       transition: 0.5s;
+                                       background-size: 200% auto;
+                                       color: white;
+                                       box-shadow: 0 0 10px #eee;
+                                       border-radius: 10px;">查 询</el-button>
+
+                            <el-button @click="clear" style="
+                                       background-image: linear-gradient(to right, #00c6ff 0%, #0072ff  51%, #00c6ff  100%);
+                                       text-align: center;
+                                       text-transform: uppercase;
+                                       transition: 0.5s;
+                                       background-size: 200% auto;
+                                       color: white;
+                                       box-shadow: 0 0 10px #eee;
+                                       border-radius: 10px;">清 空</el-button>
+                        </el-form>
+
+
+                        <!-- 表格展示信息-->
+                        <el-table
+                                height="625"
+                                stripe
+                                border
+                                :data="tableData"
+                                style="width: 100%">
+                            <el-table-column
+                                    prop="gname"
+                                    label="商品名"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="gbrand"
+                                    label="品牌"
+                                    align="center">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="gprice"
+                                    align="center"
+                                    label="单价">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="gnumber"
+                                    align="center"
+                                    label="库存量">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="gfrom"
+                                    align="center"
+                                    label="来源">
+                            </el-table-column>
+                            <el-table-column
+                                    prop="gtime"
+                                    align="center"
+                                    label="时间">
+                            </el-table-column>
+
+
+                            <el-table-column align="center" label="操作">
+
+                                <template slot-scope="scope" class="divButton">
+                                    <el-button type="info" @click="detail(scope.row)" icon="el-icon-message" circle style="
+                                    transition: 0.5s;
+                                    box-shadow: 0 0 10px #eee;
+                                    border-radius: 10px;"></el-button>
+                                    <el-button type="primary" @click="showOldData(scope.row)" icon="el-icon-edit" circle style="
+                                    transition: 0.5s;
+                                    box-shadow: 0 0 10px #eee;
+                                    border-radius: 15px;"></el-button>
+                                    <el-button type="danger" @click="deleteInfo(scope.row)" icon="el-icon-delete" circle></el-button>
+                                </template>
+
+                            </el-table-column>
+
+                        </el-table>
+
+
+                        <!-- 分页-->
+                        <el-pagination
+                                align="center"
+                                background
+                                layout="prev, pager, next, jumper, ->, total"
+                                :current-page="selectData.currentPage"
+                                :total="selectData.pageTotal"
+                                @current-change="pageChange"><!-- 页面页码改变时，触发该监听事件-->
+                        </el-pagination>
+
+
+                        <!-- element标签的属性必须加: 如:(:append-to-body) -->
+                        <el-dialog title="编辑" :visible.sync="visible" :append-to-body="true" @close="updateInfoCancel">
+
+                            <!-- 修改用表单-->
+                            <el-form :model="form" :rules="updateRules" ref="form">
+                                <el-form-item label="商品名" :label-width="formLabelWidth" prop="gName" style="width: 90%">
+                                    <el-input v-model="form.gName" :placeholder="goodData.gName" autocomplete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="品牌" :label-width="formLabelWidth" prop="gBrand" style="width: 90%">
+                                    <el-input v-model="form.gBrand" :placeholder="goodData.gBrand" autocomplete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="单价" :label-width="formLabelWidth" prop="gPrice" style="width: 90%">
+                                    <el-input v-model="form.gPrice" :placeholder="goodData.gPrice" autocomplete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="库存量" :label-width="formLabelWidth" prop="gNumber" style="width: 90%">
+                                    <el-input v-model="form.gNumber" :placeholder="goodData.gNumber" autocomplete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="来源" :label-width="formLabelWidth" prop="gFrom" style="width: 90%">
+                                    <el-input v-model="form.gFrom" :placeholder="goodData.gFrom" autocomplete="off"></el-input>
+                                </el-form-item>
+                                <el-form-item label="时间" :label-width="formLabelWidth" style="width: 90%">
+                                    <el-col :span="11">
+                                        <el-date-picker type="datetime" placeholder="选择日期" v-model="form.gTime" value-format="yyyy-MM-dd HH:mm:ss" :placeholder="goodData.gTime" style="width: 218%;"></el-date-picker>
+                                    </el-col>
+                                </el-form-item>
+                                <el-form-item label="选择" :label-width="formLabelWidth">
+                                    <el-button style="
+                                    width: 42.55%;
+                                    background-image: linear-gradient(to right, #1D976C 0%, #93F9B9  51%, #1D976C  100%);
+                                    text-align: center;
+                                    text-transform: uppercase;
+                                    transition: 0.5s;
+                                    background-size: 200% auto;
+                                    color: white;
+                                    box-shadow: 0 0 10px #eee;
+                                    border-radius: 10px;" type="primary" @click="updateInfo('form')">修 改</el-button>
+                                    <el-button style="
+                                    width: 42.55%;
+                                    background-image: linear-gradient(to right, #ED4264 0%, #FFEDBC  51%, #ED4264  100%);
+                                    text-align: center;
+                                    text-transform: uppercase;
+                                    transition: 0.5s;
+                                    background-size: 200% auto;
+                                    color: white;
+                                    box-shadow: 0 0 10px #eee;
+                                    border-radius: 10px;" @click="updateInfoCancel">取 消</el-button>
+                                </el-form-item>
+                            </el-form>
+
+                        </el-dialog>
+
+
+
+                        <el-dialog title="详情" :visible.sync="adminVisible" :append-to-body="true">
+                            <el-descriptions title="详细信息" border="true">
+                                <el-descriptions-item label="所属">{{adminInfo.aName}}</el-descriptions-item>
+<!--                                <el-descriptions-item label="账号注册时间">{{adminInfo.aTime}}</el-descriptions-item>-->
+                                <el-descriptions-item label="账号">{{adminInfo.aAccount}}</el-descriptions-item>
+                            </el-descriptions>
+                        </el-dialog>
+
+
+                    </el-main>
+
+                </el-container>
+
+
+            </el-container>
+
+
+
+        </div>
+
+
+
+
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+
+<script>
+    //允许跨域请求使用凭证
+    axios.defaults.withCredentials=true;
+
+    var vue = new Vue({
+        //绑定
+        el: '#app',
+        //数据
+        data:{
+            tableData:[],
+            goodData:{
+                gId:'',
+                aId:'',
+                gName:'',
+                gBrand:'',
+                gPrice:'',
+                gNumber:'',
+                gFrom:'',
+                gTime:''
+            },
+            selectData:{
+                gBrand:'',
+                gPriceUp:'',
+                gPriceDown:'',
+                gNumberUp:'',
+                gNumberDown:'',
+                gFrom:'',
+                gTimeUp:'',
+                gTimeDown:'',
+                currentPage:1,
+                pageSize:10,
+                pageTotal:'',
+            },
+            selectData2:{
+                gName:'',
+            },
+            visible: false,
+            form: {
+                gName:'',
+                gBrand:'',
+                gPrice:'',
+                gNumber:'',
+                gFrom:'',
+                gTime:''
+            },
+            formLabelWidth: '120px',
+            arr:[],
+            adminVisible: false,
+            adminInfo:{
+                aId:'',
+                aAccount:'',
+                aTime:'',
+                aName:''
+            },
+
+            v1:false,
+            v2:true,
+
+            pageCode:2,
+
+            selectRules:{
+                gBrand:[{
+                    pattern: /^[^0]{1,15}$/, message: '品牌名过长'
+                }],
+                gPriceUp:[{
+                    pattern: /^[1-9][0-9]{0,3}([\.][0-9]{1,2})?$/, message: '数字格式有误'
+                }],
+                gPriceDown:[{
+                    pattern: /^[1-9][0-9]{0,3}([\.][0-9]{1,2})?$/, message: '数字格式有误'
+                }],
+                gNumberUp:[{
+                    pattern: /^[1-9][0-9]{0,8}$/, message: '数字格式有误或数字过大'
+                }],
+                gNumberDown:[{
+                    pattern: /^[1-9][0-9]{0,8}$/, message: '数字格式有误或数字过大'
+                }],
+                gFrom:[{
+                    pattern: /^[^0]{1,30}$/, message: '商品来源名称过长'
+                }],
+                gName:[{
+                    pattern: /^[^0]{1,12}$/, message: '商品名过长'
+                }]
+            },
+
+            updateRules:{
+                gName:[{
+                    message: '请输入商品名'
+                },{
+                    pattern: /^[^0]{1,12}$/, message: '商品名过长'
+                }],
+                gBrand:[{
+                    message: '请输入品牌名'
+                },{
+                    pattern: /^[^0]{1,15}$/, message: '品牌名过长'
+                }],
+                gPrice:[{
+                    message: '请输入单价'
+                },{
+                    pattern: /^[1-9][0-9]{0,3}([\.][0-9]{1,2})?$/, message: '数字格式有误'
+                }],
+                gNumber:[{
+                    message: '请输入库存量'
+                },{
+                    pattern: /^[1-9][0-9]{0,8}$/, message: '数字格式有误或数字过大'
+                }],
+                gFrom:[{
+                    message: '请输入商品来源'
+                },{
+                    pattern: /^[^0]{1,30}$/, message: '商品来源名称过长'
+                }]
+            },
+
+            adminInter:{
+                //从sessionStorage中读取当前的登录用户的信息
+                aId:sessionStorage.getItem("aId"),
+                aAccount:sessionStorage.getItem("account"),
+                aName:sessionStorage.getItem("aName"),
+                aPhone:sessionStorage.getItem("aPhone"),
+                aTime:sessionStorage.getItem("aTime"),
+            },
+
+            arc:1,
+            //根据mark值的不同,用于排序时调用的方法实现不同的效果
+            mark:0,
+            //根据adminMark值的不同,用于排序时调用的方法实现不同的效果
+            adminMark:0,
+
+
+        },
+
+
+        //钩子函数，在创建vue对象时自动调用
+        created(){
+            if(this.checkCookie() === false){
+                window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            }
+            if(this.adminInter.aId === null){
+                window.location.href='http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            }else{
+                this.show();
+            }
+        },
+
+
+        methods:{
+
+            gotoStatistics(){
+                sessionStorage.setItem("goodsStatistics",'true');
+                window.location.href='http://localhost:8080/goods-manage/goods-service/org/example/static/show-goodsStatistics.html';
+            },
+
+            adminDetail(){
+                sessionStorage.setItem("changeViewVisible",'true');
+                window.location.href='http://localhost:8080/goods-manage/admin-service/org/example/static/show-changeAdminInfo.html';
+            },
+
+            //如果cookie不存在则重新登录
+            async checkCookie(){
+                let response=await axios.post('http://localhost:10110/admins/checkCookieExist');
+                if(response.data.flag === false){
+                    window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+                }
+            },
+
+            //不清除session
+            //同步调用
+            async backLogin(){
+                let params = new URLSearchParams();
+                params.append("aId", sessionStorage.getItem('aId'));
+                params.append("status", '0');
+
+                let response=await axios.post('http://localhost:10110/admins/backLogin', params);
+                if (response.data.flag){
+                    this.$message({
+                        type: 'success',
+                        message: '退出登录成功!'
+                    });
+                }else{
+                    this.$message({
+                        type: 'info',
+                        message: response.data.info,
+                    });
+                }
+
+                //返回登录界面
+                window.location.href='http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            },
+
+            //清除session
+            //同步调用
+            async backMain(){
+                //调用退出登录的接口，修改用户的登录状态
+                let params = new URLSearchParams();
+                params.append("aId", sessionStorage.getItem('aId'));
+                params.append("status", '1');
+
+                let response=await axios.post('http://localhost:10110/admins/backLogin', params);
+                if (response.data.flag){
+                    this.$message({
+                        type: 'success',
+                        message: '注销账号成功!'
+                    });
+                }else{
+                    this.$message({
+                        type: 'info',
+                        message: '注销失败,账号异常',
+                    });
+                }
+                //返回登录界面
+                window.location.href='http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            },
+
+
+            rightBackLogin(){
+                this.$confirm('是否退出登录？', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'success'
+                }).then(() => {
+                    this.backLogin();
+                }).catch(() => {
+
+                });
+            },
+            rightBackAccount(){
+                this.$confirm('是否注销账号?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'success'
+                }).then(() => {
+                    this.backMain();
+                }).catch(() => {
+
+                });
+            },
+            rightBackMain(){
+                this.$confirm('是否返回登录界面?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'success'
+                }).then(() => {
+                    this.backLogin();
+                }).catch(() => {
+
+                });
+            },
+
+            sub(formName){
+                this.$refs[formName].validate((valid) => {
+                        if(valid){
+                            this.init();
+                        }else{
+                            this.$message.error("请完善相关信息");
+                            return false;
+                        }
+                });
+            },
+
+            clear(){
+                this.selectData2.gName='';
+                this.selectData.gBrand='';
+                this.selectData.gPriceUp='';
+                this.selectData.gPriceDown='';
+                this.selectData.gNumberUp='';
+                this.selectData.gNumberDown='';
+                this.selectData.gFrom='';
+                this.selectData.gTimeUp='';
+                this.selectData.gTimeDown='';
+
+                this.show();
+            },
+
+            showOldData(row){
+
+                //获取当前行的商品的全部数据
+                //获取当前行的数据并在编辑表单中显示出来
+                this.goodData.gId=row.gid;
+                this.goodData.aId=row.aid;
+
+                this.goodData.gName=row.gname;
+                this.goodData.gBrand=row.gbrand;
+                this.goodData.gPrice=row.gprice;
+                this.goodData.gNumber=row.gnumber;
+                this.goodData.gFrom=row.gfrom;
+                this.goodData.gTime=row.gtime;
+
+                //判断
+                if(row.aid == this.adminInter.aId){
+                    //将编辑表单显示出来
+                    this.visible = true;
+                }else{
+                    this.$alert('这不是您的货物信息，暂时无法修改', '提示', {
+                        confirmButtonText: '确定'
+                    });
+                    this.visible = false;
+                }
+
+            },
+
+            addGood(){
+                sessionStorage.setItem('addGoodVisible','true');
+                window.location.href='http://localhost:8080/goods-manage/goods-service/org/example/static/show-addGood.html';
+            },
+
+            updateInfoCancel(){
+                this.form.gName='';
+                this.form.gBrand='';
+                this.form.gPrice='';
+                this.form.gNumber='';
+                this.form.gFrom='';
+                this.form.gTime='';
+                this.visible=false;
+            },
+
+            updateInfo(formName){
+                this.$refs[formName].validate((valid) => {
+                        if(valid){
+
+                            // let good={
+                            //     gId:this.goodData.gId,
+                            //     gName:this.form.gName,
+                            //     gBrand:this.form.gBrand,
+                            //     gPrice:this.form.gPrice,
+                            //     gNumber:this.form.gNumber,
+                            //     gFrom:this.form.gFrom,
+                            //     gTime:this.form.gTime
+                            // };
+
+                            axios.put('http://localhost:10110/goods/updateByGId',
+                                    {
+                                        gId:this.goodData.gId,
+                                        gName:this.form.gName,
+                                        gBrand:this.form.gBrand,
+                                        gPrice:this.form.gPrice,
+                                        gNumber:this.form.gNumber,
+                                        gFrom:this.form.gFrom,
+                                        gTime:this.form.gTime
+                                    }
+                            )
+                                .then((response)=> {
+
+                                    if(response.data.flag){
+                                        this.$message({
+                                            type: 'success',
+                                            message: '修改成功!'
+                                        });
+                                    }else{
+                                        this.$message({
+                                            type: 'info',
+                                            message: '修改失败',
+                                        });
+                                    }
+                                    //修改完成后关闭表单
+                                    this.visible=false;
+                                    //修改完成后刷新数据
+                                    this.show();
+                                    //修改完成后将表单数据清空
+                                    this.form.gName='';
+                                    this.form.gBrand='';
+                                    this.form.gPrice='';
+                                    this.form.gNumber='';
+                                    this.form.gFrom='';
+                                    this.form.gTime='';
+                                });
+
+
+                        }else{
+                            this.$message.error("请完善相关信息");
+                            return false;
+                        }
+                });
+
+
+            },
+
+            detail(row){
+
+                //显示货物的详情
+                this.adminVisible=true;
+                //显示信息
+                //this.adminInfo.aId=row.admin.aid;
+                //console.log(row.admin.apassword);
+                this.adminInfo.aName=row.admin.aname;
+                this.adminInfo.aAccount=row.admin.aaccount;
+                this.adminInfo.aTime=row.admin.atime;
+
+            },
+
+
+            deleteInfo(row){
+
+                let param="?gId="+row.gid;
+
+                if(row.aid == this.adminInter.aId){
+
+                    this.$confirm('此操作将永久删除信息, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+
+                        axios.delete('http://localhost:10110/goods/deleteByGId/'+param)
+                            .then((response)=> {
+
+                                if(response.data.flag){
+                                    this.$message({
+                                        type: 'success',
+                                        message: '删除成功!'
+                                    });
+                                }else{
+                                    this.$message({
+                                        type: 'info',
+                                        message: '删除失败',
+                                    });
+                                }
+                                this.show();
+                            });
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除',
+                        });
+                    });
+
+                }else{
+                    this.$alert('这不是您的货物信息，无法删除', '提示', {
+                        confirmButtonText: '确定'
+                    });
+                }
+
+            },
+
+            deleteAllByAid(){
+                let param="?aId="+sessionStorage.getItem('aId');
+
+                    this.$confirm('是否删除个人商品的全部信息?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(() => {
+
+                        axios.delete('http://localhost:10110/goods/deleteAllByAid/'+param)
+                            .then((response)=> {
+
+                                if(response.data.flag){
+                                    this.$message({
+                                        type: 'success',
+                                        message: '删除成功!'
+                                    });
+                                }else{
+                                    this.$message({
+                                        type: 'info',
+                                        message: '删除失败',
+                                    });
+                                }
+                                this.show();
+                            });
+                    }).catch(() => {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除',
+                        });
+                    });
+            },
+
+            //含分页操作和条件查询
+            init(){
+
+                //页码标识
+                this.pageCode=1;
+
+                let param="?currentPage="+this.selectData.currentPage+"&pageSize="+this.selectData.pageSize;
+                let gName1="&gName="+this.selectData2.gName;
+                let gBrand1="&gBrand="+this.selectData.gBrand;
+                let gPriceUp1="&gPriceUp="+this.selectData.gPriceUp;
+                let gPriceDown1="&gPriceDown="+this.selectData.gPriceDown;
+                let gNumberUp1="&gNumberUp="+this.selectData.gNumberUp;
+                let gNumberDown1="&gNumberDown="+this.selectData.gNumberDown;
+                let gFrom1="&gFrom="+this.selectData.gFrom;
+                let gTimeUp1="&gTimeUp="+this.selectData.gTimeUp;
+                let gTimeDown1="&gTimeDown="+this.selectData.gTimeDown;
+
+
+                if(this.selectData2.gName === ''){
+                    gName1="";
+                }
+                if(this.selectData.gBrand === ''){
+                    gBrand1="";
+                }
+                if(this.selectData.gPriceUp === ''){
+                    gPriceUp1="";
+                }
+                if(this.selectData.gPriceDown === ''){
+                    gPriceDown1="";
+                }
+                if(this.selectData.gNumberUp === ''){
+                    gNumberUp1="";
+                }
+                if(this.selectData.gNumberDown === ''){
+                    gNumberDown1="";
+                }
+                if(this.selectData.gFrom === ''){
+                    gFrom1="";
+                }
+
+
+                if(this.selectData.gTimeUp === '' || this.selectData.gTimeUp === null){
+                    gTimeUp1="";
+                }
+                if(this.selectData.gTimeDown === ''|| this.selectData.gTimeDown === null){
+                    gTimeDown1="";
+                }
+
+
+                axios.get('http://localhost:10110/goods/selectByWhere/'+param+gName1+gBrand1+gPriceUp1+gPriceDown1
+                +gNumberUp1+gNumberDown1+gFrom1+gTimeUp1+gTimeDown1)
+                    .then((response)=> {
+                        //获取当前页码值
+                        //查询数据
+                        this.tableData=response.data.data;
+                        //更新总条目数
+                        this.selectData.pageTotal=Number(response.data.info);
+                    });
+
+            },
+
+
+            show(){
+
+                //页码标识
+                this.pageCode=2;
+
+                axios.get('http://localhost:10110/goods/select/'+this.selectData.currentPage+'/'+this.selectData.pageSize)
+                    .then((response)=> {
+                        //查询数据
+                        this.tableData=response.data.data;
+                        //更新总条目数
+                        this.selectData.pageTotal=Number(response.data.info);
+                    });
+            },
+
+            showMyself(){
+
+                //页码标识
+                this.pageCode=3;
+
+                axios.get('http://localhost:10110/goods/select/'+this.selectData.currentPage+'/'+this.selectData.pageSize+'/'+sessionStorage.getItem('aId'))
+                    .then((response)=> {
+                        this.tableData=response.data.data;
+                        //更新总条目数
+                        this.selectData.pageTotal=Number(response.data.info);
+                    });
+            },
+
+            showSort(){
+
+                //页码标识
+                this.pageCode=4;
+
+                axios.get('http://localhost:10110/goods/selectAll/sort/'+this.selectData.currentPage+'/'+this.selectData.pageSize+'/'+this.mark)
+                    .then((response)=> {
+                        this.tableData=response.data.data;
+                        //更新总条目数
+                        this.selectData.pageTotal=Number(response.data.info);
+                    });
+            },
+
+            showAdminSort(){
+
+                //页码标识
+                this.pageCode=5;
+
+                axios.get('http://localhost:10110/goods/selectAll/adminSort/'+this.selectData.currentPage+'/'+this.selectData.pageSize+'/'+sessionStorage.getItem("aId")+'/'+this.adminMark)
+                    .then((response)=> {
+                        this.tableData=response.data.data;
+                        //更新总条目数
+                        this.selectData.pageTotal=Number(response.data.info);
+                    });
+            },
+
+
+            showAllGoods(){
+
+                this.v1=false;
+                this.v2=true;
+                //初始化当前页码值为1
+                this.selectData.currentPage=1;
+                this.show();
+
+            },
+
+
+            showMyselfGoods(){
+
+                this.v1=false;
+                this.v2=true;
+                //初始化当前页码值为1
+                this.selectData.currentPage=1;
+                this.showMyself();
+
+            },
+
+            exactFind(){
+                this.v1=true;
+                this.v2=false;
+                //初始化当前页码值为1
+                this.selectData.currentPage=1;
+                this.show();
+            },
+
+            showAllGoodsSort(mark){
+                //改变mark的值
+                this.mark=mark;
+                this.v1=false;
+                this.v2=true;
+                //初始化当前页码值为1
+                this.selectData.currentPage=1;
+                this.showSort();
+            },
+
+            showAdminGoodsSort(adminMark){
+                //改变mark的值
+                this.adminMark=adminMark;
+                this.v1=false;
+                this.v2=true;
+                //初始化当前页码值为1
+                this.selectData.currentPage=1;
+                this.showAdminSort();
+            },
+
+
+            //分页操作后重新查询该对应页码的数据,以及更新数据
+            pageChange(currentPage){
+                //更新页码数据
+                this.selectData.currentPage=currentPage;
+                //根据不同的页码属性调用不同的方法
+                //基于新的页码重新执行查询方法
+                if(this.pageCode === 1){
+                    this.init();
+                }else if(this.pageCode === 2){
+                    this.show();
+                }else if(this.pageCode === 3){
+                    this.showMyself();
+                }else if(this.pageCode === 4){
+                    this.showSort();
+                }else if(this.pageCode === 5){
+                    this.showAdminSort();
+                }else{
+                    console.log('错误')
+                }
+            },
+
+
+
+        }
+
+    })
+
+
+
+
+
+
+</script>
+
+
+
+</html>

@@ -1,0 +1,1662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>数据统计</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+    <style>
+
+        .text {
+            font-size: 14px;
+        }
+
+        .item {
+            margin-bottom: 18px;
+        }
+
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: "";
+        }
+        .clearfix:after {
+            clear: both
+        }
+
+        .box-card {
+            width: 680px;
+        }
+
+        .el-header {
+            background-color: #B3C0D1;
+            color: #333;
+            line-height: 60px;
+        }
+
+        .el-aside {
+            color: #333;
+        }
+
+        .el-header {
+            background-color: #f0f9eb;
+            line-height: 60px;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 5px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-aside {
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 10px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-menu-item{
+            color: white;
+            border-radius: 10px;
+        }
+
+        .el-menu{
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            color: white;
+            box-shadow: 0 0 20px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        #contain{
+            visibility: visible;
+        }
+
+        img{
+            position: absolute;
+            width: 100%;
+            height: 105%;
+        }
+
+    </style>
+
+</head>
+
+
+
+<body>
+
+<img src="http://localhost:8080/goods-manage/admin-service/org/example/img/background4.png"/>
+
+<div id="statistics">
+
+    <el-container style="height: 100%;">
+
+        <el-aside width="200px" style="background-color: rgb(238, 241, 246);">
+            <el-menu :default-openeds="['2','5']"
+                     background-color="#48505a"
+                     text-color="#fff"
+                     active-text-color="#ffd04b">
+                <el-menu-item index="4">
+                    <i class="el-icon-s-home"></i>
+                    <span slot="title" @click="backLogin">返回登录界面</span>
+                </el-menu-item>
+                <el-submenu index="2">
+                    <template slot="title"><i class="el-icon-back"></i>返回</template>
+                    <el-menu-item-group>
+                        <el-menu-item index="2-1" @click="back">返回上一页</el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group>
+                        <el-menu-item index="2-2" @click="back">返回仓库管理</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+                <el-submenu index="5">
+                    <template slot="title"><i class="el-icon-s-data"></i>总体数据可视化</template>
+                    <el-menu-item-group>
+                        <template slot="title">全部商品</template>
+                        <el-menu-item index="5-1">
+                            <span slot="title" @click="totalBaseMap">总体概览</span>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group>
+                        <template slot="title">柱状图</template>
+                        <el-menu-item index="5-2">
+                            <span slot="title" @click="goodsAllMap">柱状仓储信息</span>
+                        </el-menu-item>
+                        <el-menu-item index="5-3">
+                            <span slot="title" @click="avgPriceAllMap">柱状平均单价</span>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group>
+                        <template slot="title">饼状图</template>
+                        <el-menu-item index="5-4">
+                            <span slot="title" @click="goodsAllCircleMap">饼状仓储信息</span>
+                        </el-menu-item>
+                        <el-menu-item index="5-5">
+                            <span slot="title" @click="avgPriceAllCircleMap">饼状平均单价</span>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group>
+                        <template slot="title">雷达图</template>
+                        <el-menu-item index="5-6">
+                            <span slot="title" @click="goodsRadarMap">仓储量雷达图</span>
+                        </el-menu-item>
+                        <el-menu-item index="5-7">
+                            <span slot="title" @click="priceRadarMap">平均单件雷达图</span>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+
+
+        <el-container style="height: 100%;">
+
+            <el-header style="text-align: right; font-size: 15px">
+
+                <el-menu class="el-menu-demo"
+                         mode="horizontal"
+                         text-color="#fff"
+                         background-color="#545c64"
+                         active-text-color="#ffd04b">
+
+                    <i class="el-icon-s-tools" style="margin-right: 15px;color: #f0f9eb"></i>
+                    <i class="el-icon-minus" style="margin-right: 15px;color: #f0f9eb"></i>
+                    <span style="color: #f0f9eb">当前用户：{{name}}</span>
+                    <i class="el-icon-user-solid" style="margin-right: 15px;color: #f0f9eb"></i>
+                    <i class="el-icon-minus" style="margin-right: 15px;color: #f0f9eb"></i>
+
+                </el-menu>
+
+            </el-header>
+
+            <el-main>
+
+                <div id="baseContain" style="width: 1200px;height:690px;" v-show="v0"></div>
+                <div id="goodsAll" style="width: 1200px;height:690px;" v-show="v1"></div>
+                <div id="goodsAllCircle" style="width: 1200px;height:690px;" v-show="v2"></div>
+                <div id="goodsRadar" style="width: 1200px;height:690px;" v-show="v3"></div>
+                <div id="priceRadar" style="width: 1200px;height:690px;" v-show="v4"></div>
+                <div id="avgPriceAll" style="width: 1200px;height:690px;" v-show="v5"></div>
+                <div id="avgPriceAllCircle" style="width: 1200px;height:690px;" v-show="v6"></div>
+
+            </el-main>
+
+        </el-container>
+
+    </el-container>
+
+</div>
+
+
+
+
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.staticfile.org/echarts/5.4.0/echarts.min.js"></script>
+
+<script>
+    //允许跨域请求使用凭证
+    axios.defaults.withCredentials=true;
+
+    var vu = new Vue({
+        el:'#statistics',
+        data:{
+            name:sessionStorage.getItem('aName'),
+
+            goodsStatistics:'false',
+
+            like: true,
+            value1: '',
+            value2: '',
+            title: '',
+
+            //信息
+            allNum:'',
+            adminNum:'',
+            allPriceAvg:'',
+            allPriceAvgs:[],
+            adminPriceAvg:'',
+            allNumAvg:'',
+            allNumAvgs:[],
+            info1:{
+                aName:[],
+                num:[],
+            },
+            info2:{
+                aName:[],
+                avg:[],
+            },
+            v0:false,
+            v1:false,
+            v2:false,
+            v3:false,
+            v4:false,
+            v5:false,
+            v6:false,
+
+        },
+
+
+        created(){
+            if(this.checkCookie() === false){
+                window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            }
+            this.goodsStatistics=sessionStorage.getItem('goodsStatistics')
+            if(this.goodsStatistics === 'false'){
+                window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            }else if(this.goodsStatistics === 'true'){
+                this.goodsStatistics = 'false';
+            }else{
+                window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            }
+        },
+
+        methods:{
+
+            avgPriceAllMap(){
+                this.statistics(5);
+
+                var myChart = echarts.init(document.getElementById('avgPriceAll'));
+                var option;
+
+                // 绘制左侧面
+                const CubeLeft = echarts.graphic.extendShape({
+                    shape: {
+                        x: 0,
+                        y: 0,
+                    },
+                    buildPath: function (ctx, shape) {
+                        // 会canvas的应该都能看得懂，shape是从custom传入的
+                        const xAxisPoint = shape.xAxisPoint;
+                        const c0 = [shape.x, shape.y];
+                        const c1 = [shape.x - 13, shape.y - 13];
+                        const c2 = [xAxisPoint[0] - 13, xAxisPoint[1] - 13];
+                        const c3 = [xAxisPoint[0], xAxisPoint[1]];
+                        ctx.moveTo(c0[0], c0[1])
+                            .lineTo(c1[0], c1[1])
+                            .lineTo(c2[0], c2[1])
+                            .lineTo(c3[0], c3[1])
+                            .closePath();
+                    },
+                });
+                // 绘制右侧面
+                const CubeRight = echarts.graphic.extendShape({
+                    shape: {
+                        x: 0,
+                        y: 0,
+                    },
+                    buildPath: function (ctx, shape) {
+                        const xAxisPoint = shape.xAxisPoint;
+                        const c1 = [shape.x, shape.y];
+                        const c2 = [xAxisPoint[0], xAxisPoint[1]];
+                        const c3 = [xAxisPoint[0] + 18, xAxisPoint[1] - 9];
+                        const c4 = [shape.x + 18, shape.y - 9];
+                        ctx.moveTo(c1[0], c1[1])
+                            .lineTo(c2[0], c2[1])
+                            .lineTo(c3[0], c3[1])
+                            .lineTo(c4[0], c4[1])
+                            .closePath();
+                    },
+                });
+                // 绘制顶面
+                const CubeTop = echarts.graphic.extendShape({
+                    shape: {
+                        x: 0,
+                        y: 0,
+                    },
+                    buildPath: function (ctx, shape) {
+                        const c1 = [shape.x, shape.y];
+                        const c2 = [shape.x + 18, shape.y - 9];
+                        const c3 = [shape.x + 5, shape.y - 22];
+                        const c4 = [shape.x - 13, shape.y - 13];
+                        ctx.moveTo(c1[0], c1[1])
+                            .lineTo(c2[0], c2[1])
+                            .lineTo(c3[0], c3[1])
+                            .lineTo(c4[0], c4[1])
+                            .closePath();
+                    },
+                });
+                // 注册三个面图形
+                echarts.graphic.registerShape("CubeLeft", CubeLeft);
+                echarts.graphic.registerShape("CubeRight", CubeRight);
+                echarts.graphic.registerShape("CubeTop", CubeTop);
+
+                option = {
+                    backgroundColor: "#012366",
+
+                    tooltip: {
+                        trigger: "axis",
+                        axisPointer: {
+                            type: "shadow",
+                        },
+                        formatter: function (params, ticket, callback) {
+                            const item = params[1];
+                            return item.name + " : " + item.value;
+                        },
+                    },
+                    grid: {
+                        left: 40,
+                        right: 40,
+                        bottom: 100,
+                        top: 100,
+                        containLabel: true,
+                    },
+                    xAxis: {
+                        type: "category",
+                        data: this.info2.aName,
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: "white",
+                            },
+                        },
+                        offset: 25,
+                        axisTick: {
+                            show: false,
+                            length: 9,
+                            alignWithLabel: true,
+                            lineStyle: {
+                                color: "#7DFFFD",
+                            },
+                        },
+                        axisLabel: {
+                            show: true,
+                            fontSize: 16,
+                        },
+                    },
+                    yAxis: {
+                        type: "value",
+                        axisLine: {
+                            show: false,
+                            lineStyle: {
+                                color: "white",
+                            },
+                        },
+                        splitLine: {
+                            show: false,
+                        },
+                        axisTick: {
+                            show: false,
+                        },
+                        axisLabel: {
+                            show: false,
+                            fontSize: 16,
+                        },
+                        boundaryGap: ["20%", "20%"],
+                    },
+                    series: [
+                        {
+                            type: "custom",
+                            renderItem: function (params, api) {
+                                const location = api.coord([api.value(0), api.value(1)]);
+                                return {
+                                    type: "group",
+                                    children: [
+                                        {
+                                            type: "CubeLeft",
+                                            shape: {
+                                                api,
+                                                x: location[0],
+                                                y: location[1],
+                                                xAxisPoint: api.coord([api.value(0), 0]),
+                                            },
+                                            style: {
+                                                fill: "rgba(47,102,192,.27)",
+                                            },
+                                        },
+                                        {
+                                            type: "CubeRight",
+                                            shape: {
+                                                api,
+                                                x: location[0],
+                                                y: location[1],
+                                                xAxisPoint: api.coord([api.value(0), 0]),
+                                            },
+                                            style: {
+                                                fill: "rgba(59,128,226,.27)",
+                                            },
+                                        },
+                                        {
+                                            type: "CubeTop",
+                                            shape: {
+                                                api,
+                                                x: location[0],
+                                                y: location[1],
+                                                xAxisPoint: api.coord([api.value(0), 0]),
+                                            },
+                                            style: {
+                                                fill: "rgba(72,156,221,.27)",
+                                            },
+                                        },
+                                    ],
+                                };
+                            },
+                            data: this.info2.avg,
+                        },
+                        {
+                            type: "custom",
+                            renderItem: (params, api) => {
+                                const location = api.coord([api.value(0), api.value(1)]);
+                                var color =
+                                    api.value(1) > 2000
+                                        ? "red"
+                                        : new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                            {
+                                                offset: 0,
+                                                color: "rgba(67,102,243,1)",
+                                            },
+                                            {
+                                                offset: 1,
+                                                color: "rgba(29,67,243,1)",
+                                            },
+                                        ]);
+                                return {
+                                    type: "group",
+                                    children: [
+                                        {
+                                            type: "CubeLeft",
+                                            shape: {
+                                                api,
+                                                xValue: api.value(0),
+                                                yValue: api.value(1),
+                                                x: location[0],
+                                                y: location[1],
+                                                xAxisPoint: api.coord([api.value(0), 0]),
+                                            },
+                                            style: {
+                                                fill: color,
+                                            },
+                                        },
+                                        {
+                                            type: "CubeRight",
+                                            shape: {
+                                                api,
+                                                xValue: api.value(0),
+                                                yValue: api.value(1),
+                                                x: location[0],
+                                                y: location[1],
+                                                xAxisPoint: api.coord([api.value(0), 0]),
+                                            },
+                                            style: {
+                                                fill: color,
+                                            },
+                                        },
+                                        {
+                                            type: "CubeTop",
+                                            shape: {
+                                                api,
+                                                xValue: api.value(0),
+                                                yValue: api.value(1),
+                                                x: location[0],
+                                                y: location[1],
+                                                xAxisPoint: api.coord([api.value(0), 0]),
+                                            },
+                                            style: {
+                                                fill: color,
+                                            },
+                                        },
+                                    ],
+                                };
+                            },
+                            data: this.info2.avg,
+                        },
+                        {
+                            type: "bar",
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: "top",
+                                    fontSize: 16,
+                                    color: "#fff",
+                                    offset: [2, -25],
+                                },
+                            },
+                            itemStyle: {
+                                color: "transparent",
+                            },
+                            tooltip: {},
+                        },
+                    ],
+                };
+
+                myChart.setOption(option);
+
+                this.v0=false;
+                this.v1=false;
+                this.v2=false;
+                this.v3=false;
+                this.v4=false;
+                this.v5=true;
+                this.v6=false;
+            },
+
+            avgPriceAllCircleMap(){
+                this.statistics(5);
+
+                //数据需要使用键值对
+                let datas=[];
+                for(let i = 0;i<this.info2.aName.length;i++){
+                    let obj={};
+                    obj.name=this.info2.aName[i];
+                    obj.value=this.info2.avg[i];
+                    datas[i]=obj;
+                }
+
+
+                var myChart = echarts.init(document.getElementById('avgPriceAllCircle'));
+                var option;
+                var img = "data:image/png;base64,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";
+
+                var data = [];
+                var color = [
+                    "#00ffff",
+                    "#00cfff",
+                    "#006ced",
+                    "#ffe000",
+                    "#ffa800",
+                    "#ff5b00",
+                    "#ff3000",
+                ];
+                for (var i = 0; i < datas.length; i++) {
+                    data.push(
+                        {
+                            value: datas[i].value,
+                            name: datas[i].name,
+                            itemStyle: {
+                                normal: {
+                                    borderWidth: 5,
+                                    shadowBlur: 20,
+                                    borderColor: color[i],
+                                    shadowColor: color[i],
+                                },
+                            },
+                        },
+                        {
+                            value: 2,
+                            name: "",
+                            itemStyle: {
+                                normal: {
+                                    label: {
+                                        show: false,
+                                    },
+                                    labelLine: {
+                                        show: false,
+                                    },
+                                    color: "rgba(0, 0, 0, 0)",
+                                    borderColor: "rgba(0, 0, 0, 0)",
+                                    borderWidth: 0,
+                                },
+                            },
+                        }
+                    );
+                }
+                var seriesOption = [
+                    {
+                        name: "",
+                        type: "pie",
+                        clockWise: false,
+                        radius: [105, 109],
+                        hoverAnimation: false,
+                        itemStyle: {
+                            normal: {
+                                label: {
+                                    show: true,
+                                    position: "outside",
+                                    color: "#ddd",
+                                    formatter: function (params) {
+                                        var percent = 0;
+                                        var total = 0;
+                                        for (var i = 0; i < datas.length; i++) {
+                                            total += datas[i].value;
+                                        }
+                                        percent = ((params.value / total) * 100).toFixed(0);
+                                        if (params.name !== "") {
+                                            return (
+                                                "用户名：" +
+                                                params.name +
+                                                "\n" +
+                                                "\n" +
+                                                "占百分比：" +
+                                                percent +
+                                                "%"
+                                            );
+                                        } else {
+                                            return "";
+                                        }
+                                    },
+                                },
+                                labelLine: {
+                                    length: 30,
+                                    length2: 100,
+                                    show: true,
+                                    color: "#00ffff",
+                                },
+                            },
+                        },
+                        data: data,
+                    },
+                ];
+                option = {
+                    backgroundColor: "#0A2E5D",
+                    color: color,
+                    title: {
+                        text: "饼状平均单价分类",
+                        top: "48%",
+                        textAlign: "center",
+                        left: "50%",
+                        textStyle: {
+                            color: "#fff",
+                            fontSize: 22,
+                            fontWeight: "400",
+                        },
+                    },
+                    graphic: {
+                        elements: [
+                            {
+                                type: "image",
+                                z: 3,
+                                style: {
+                                    image: img,
+                                    width: 178,
+                                    height: 178,
+                                },
+                                left: "center",
+                                top: "center",
+                                position: [100, 100],
+                            },
+                        ],
+                    },
+                    tooltip: {
+                        show: false,
+                    },
+                    legend: {
+                        icon: "circle",
+                        orient: "horizontal",
+                        data: this.info2.aName,
+                        right: 310,
+                        top:50,
+                        bottom: 150,
+                        align: "right",
+                        textStyle: {
+                            color: "#fff",
+                        },
+                        itemGap: 20,
+                    },
+                    toolbox: {
+                        show: false,
+                    },
+                    series: seriesOption,
+                };
+
+                myChart.setOption(option);
+
+                this.v0=false;
+                this.v1=false;
+                this.v2=false;
+                this.v3=false;
+                this.v4=false;
+                this.v5=false;
+                this.v6=true;
+            },
+
+            priceRadarMap(){
+                this.statistics(5);
+
+                //数据需要使用键值对
+                let datas=[];
+                for(let i = 0;i<this.info2.aName.length;i++){
+                    let obj={};
+                    obj.name=this.info2.aName[i];
+                    obj.max=100;
+                    datas[i]=obj;
+                }
+
+                var chartDom = document.getElementById('priceRadar');
+                var myChart = echarts.init(chartDom);
+                var option;
+
+
+                option = {
+                    backgroundColor: "#101736",
+                    color: ["#00c2ff", "#f9cf67", "#e92b77"],
+                    legend: {
+                        show: true,
+                        // icon: 'circle',//图例形状
+                        bottom: 45,
+                        center: 0,
+                        itemWidth: 14, // 图例标记的图形宽度。[ default: 25 ]
+                        itemHeight: 14, // 图例标记的图形高度。[ default: 14 ]
+                        itemGap: 21, // 图例每项之间的间隔。[ default: 10 ]横向布局时为水平间隔，纵向布局时为纵向间隔。
+                        textStyle: {
+                            fontSize: 14,
+                            color: "#ade3ff",
+                        },
+                        data: ["平均单价"],
+                    },
+                    radar: [
+                        {
+                            indicator: datas,
+                            textStyle: {
+                                color: "red",
+                            },
+                            center: ["50%", "50%"],
+                            radius: 240,
+                            startAngle: 90,
+                            splitNumber: 3,
+                            orient: "horizontal", // 图例列表的布局朝向,默认'horizontal'为横向,'vertical'为纵向.
+                            name: {
+                                formatter: "{value}",
+                                textStyle: {
+                                    fontSize: 14, //外圈标签字体大小
+                                    color: "#5b81cb", //外圈标签字体颜色
+                                },
+                            },
+                            splitArea: {
+                                // 坐标轴在 grid 区域中的分隔区域，默认不显示。
+                                show: true,
+                                areaStyle: {
+                                    // 分隔区域的样式设置。
+                                    color: ["#141c42", "#141c42"], // 分隔区域颜色。分隔区域会按数组中颜色的顺序依次循环设置颜色。默认是一个深浅的间隔色。
+                                },
+                            },
+                            axisLine: {
+                                //指向外圈文本的分隔线样式
+                                lineStyle: {
+                                    color: "#153269",
+                                },
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    color: "#113865", // 分隔线颜色
+                                    width: 1, // 分隔线线宽
+                                },
+                            },
+                        },
+                    ],
+                    series: [
+                        {
+                            name: "雷达图",
+                            type: "radar",
+                            itemStyle: {
+                                emphasis: {
+                                    lineStyle: {
+                                        width: 4,
+                                    },
+                                },
+                            },
+                            data: [
+                                {
+                                    name: "平均单价",
+                                    value: this.info2.avg,
+                                    areaStyle: {
+                                        normal: {
+                                            // 单项区域填充样式
+                                            color: {
+                                                type: "linear",
+                                                x: 0, //右
+                                                y: 0, //下
+                                                x2: 1, //左
+                                                y2: 1, //上
+                                                colorStops: [
+                                                    {
+                                                        offset: 0,
+                                                        color: "#00c2ff",
+                                                    },
+                                                    {
+                                                        offset: 0.5,
+                                                        color: "rgba(0,0,0,0)",
+                                                    },
+                                                    {
+                                                        offset: 1,
+                                                        color: "#00c2ff",
+                                                    },
+                                                ],
+                                                globalCoord: false,
+                                            },
+                                            opacity: 1, // 区域透明度
+                                        },
+                                    },
+                                    symbolSize: 2.5, // 单个数据标记的大小，可以设置成诸如 10 这样单一的数字，也可以用数组分开表示宽和高，例如 [20, 10] 表示标记宽为20，高为10。
+                                    label: {
+                                        // 单个拐点文本的样式设置
+                                        normal: {
+                                            show: true, // 单个拐点文本的样式设置。[ default: false ]
+                                            position: "top", // 标签的位置。[ default: top ]
+                                            distance: 2, // 距离图形元素的距离。当 position 为字符描述值（如 'top'、'insideRight'）时候有效。[ default: 5 ]
+                                            color: "#6692e2", // 文字的颜色。如果设置为 'auto'，则为视觉映射得到的颜色，如系列色。[ default: "#fff" ]
+                                            fontSize: 14, // 文字的字体大小
+                                            formatter: function (params) {
+                                                return params.value;
+                                            },
+                                        },
+                                    },
+                                    itemStyle: {
+                                        normal: {
+                                            //图形悬浮效果
+                                            borderColor: "#00c2ff",
+                                            borderWidth: 2.5,
+                                        },
+                                    },
+                                },
+                            ],
+                        },
+                    ],
+                };
+
+                option && myChart.setOption(option);
+
+
+                this.v0=false;
+                this.v1=false;
+                this.v2=false;
+                this.v3=false;
+                this.v4=true;
+                this.v5=false;
+                this.v6=false;
+            },
+            goodsRadarMap(){
+                this.statistics(6);
+
+                //数据需要使用键值对
+                let datas=[];
+                for(let i = 0;i<this.info1.aName.length;i++){
+                    let obj={};
+                    obj.name=this.info1.aName[i];
+                    obj.max=50000;
+                    datas[i]=obj;
+                }
+
+                var chartDom = document.getElementById('goodsRadar');
+                var myChart = echarts.init(chartDom);
+                var option;
+
+                option = {
+                    backgroundColor: "#0A2E5D",
+                    normal: {
+                        top: 200,
+                        left: 300,
+                        width: 500,
+                        height: 400,
+                        zIndex: 6,
+                        backgroundColor: "",
+                    },
+                    color: ["rgba(245, 166, 35, 1)", "rgba(19, 173, 255, 1)"],
+                    title: {
+                        show: true,
+                        text: "仓储量雷达图",
+                        left: "45%",
+                        top: "1%",
+                        textStyle: {
+                            fontSize: 18,
+                            color: "#fff",
+                            fontStyle: "normal",
+                            fontWeight: "normal",
+                        },
+                    },
+                    tooltip: {
+                        show: true,
+                        trigger: "item",
+                    },
+                    legend: {
+                        show: true,
+                        icon: "circle",
+                        left: "46%",
+                        top: "90%",
+                        orient: "horizontal",
+                        textStyle: {
+                            fontSize: 14,
+                            color: "#fff",
+                        },
+                        data: ["仓储量"],
+                    },
+                    radar: {
+                        center: ["50%", "50%"],
+                        radius: "70%",
+                        startAngle: 90,
+                        splitNumber: 4,
+                        shape: "circle",
+                        splitArea: {
+                            areaStyle: {
+                                color: ["transparent"],
+                            },
+                        },
+                        axisLabel: {
+                            show: false,
+                            fontSize: 18,
+                            color: "#fff",
+                            fontStyle: "normal",
+                            fontWeight: "normal",
+                        },
+                        axisLine: {
+                            show: true,
+                            lineStyle: {
+                                color: "white", //
+                            },
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                color: "white", //
+                            },
+                        },
+                        indicator: datas,
+                    },
+                    series: [
+                        {
+                            name: "仓储量",
+                            type: "radar",
+                            symbol: "circle",
+                            symbolSize: 10,
+                            areaStyle: {
+                                normal: {
+                                    color: "rgba(245, 166, 35, 0.4)",
+                                },
+                            },
+                            itemStyle: {
+                                color: "rgba(245, 166, 35, 1)",
+                                borderColor: "rgba(245, 166, 35, 0.3)",
+                                borderWidth: 10,
+                            },
+                            lineStyle: {
+                                normal: {
+                                    type: "dashed",
+                                    color: "rgba(245, 166, 35, 1)",
+                                    width: 2,
+                                },
+                            },
+                            data: [this.info1.num],
+                        },
+                    ],
+                };
+
+                option && myChart.setOption(option);
+
+
+                this.v0=false;
+                this.v1=false;
+                this.v2=false;
+                this.v3=true;
+                this.v4=false;
+                this.v5=false;
+                this.v6=false;
+            },
+
+            goodsAllCircleMap(){
+
+                this.statistics(4);
+
+                //数据需要使用键值对
+                let datas=[];
+                for(let i = 0;i<this.info1.aName.length;i++){
+                    let obj={};
+                    obj.name=this.info1.aName[i];
+                    obj.value=this.info1.num[i];
+                    datas[i]=obj;
+                }
+
+
+                var myChart = echarts.init(document.getElementById('goodsAllCircle'));
+                var option;
+
+                var scale = 1;
+                var rich = {
+                    yellow: {
+                        color: "#ffc72b",
+                        fontSize: 30 * scale,
+                        padding: [5, 4],
+                        align: "center",
+                    },
+                    total: {
+                        color: "#ffc72b",
+                        fontSize: 40 * scale,
+                        align: "center",
+                    },
+                    white: {
+                        color: "#fff",
+                        align: "center",
+                        fontSize: 14 * scale,
+                        padding: [21, 0],
+                    },
+                    blue: {
+                        color: "#49dff0",
+                        fontSize: 16 * scale,
+                        align: "center",
+                    },
+                    hr: {
+                        borderColor: "#0b5263",
+                        width: "100%",
+                        borderWidth: 1,
+                        height: 0,
+                    },
+                };
+                option = {
+                    backgroundColor: "#031f2d",
+                    title: {
+                        text: "饼状商品总体仓储数量分类",
+                        left: "center",
+                        top: "53%",
+                        padding: [24, 0],
+                        textStyle: {
+                            color: "#fff",
+                            fontSize: 18 * scale,
+                            align: "center",
+                        },
+                    },
+                    legend: {
+                        selectedMode: false,
+                        formatter: function (name) {
+                            var total = 0;
+                            var averagePercent;
+                            datas.forEach(function (value, index, array) {
+                                total += value.value;
+                            });
+                            return "{total|" + total + "}";
+                        },
+                        data: [datas[0].name],
+                        left: "center",
+                        top: "center",
+                        icon: "none",
+                        align: "center",
+                        textStyle: {
+                            color: "#fff",
+                            fontSize: 16 * scale,
+                            rich: rich,
+                        },
+                    },
+                    series: [
+                        {
+                            name: "饼状商品总体仓储数量分类",
+                            type: "pie",
+                            radius: ["42%", "50%"],
+                            hoverAnimation: false,
+                            color: ["#c487ee", "#deb140", "#49dff0", "#034079", "#6f81da", "#00ffb4"],
+                            label: {
+                                normal: {
+                                    formatter: function (params, ticket, callback) {
+                                        var total = 0; //仓储总数量
+                                        var percent = 0; //占比
+                                        datas.forEach(function (value, index, array) {
+                                            total += value.value;
+                                        });
+                                        percent = ((params.value / total) * 100).toFixed(1);
+                                        return (
+                                            "{white|" +
+                                            params.name +
+                                            "}\n{hr|}\n{yellow|" +
+                                            params.value +
+                                            "}\n{blue|" +
+                                            percent +
+                                            "%}"
+                                        );
+                                    },
+                                    rich: rich,
+                                },
+                            },
+                            labelLine: {
+                                normal: {
+                                    length: 55 * scale,
+                                    length2: 0,
+                                    lineStyle: {
+                                        color: "#0b5263",
+                                    },
+                                },
+                            },
+                            data: datas,
+                        },
+                    ],
+                };
+
+                myChart.setOption(option);
+
+                this.v0=false;
+                this.v1=false;
+                this.v2=true;
+                this.v3=false;
+                this.v4=false;
+                this.v5=false;
+                this.v6=false;
+            },
+
+            goodsAllMap(){
+                this.statistics(4);
+
+                var myChart = echarts.init(document.getElementById('goodsAll'));
+                var option;
+
+                option = {
+                    title: {
+                        text: "柱状商品分析",
+                        textStyle: {
+                            color: "#fff",
+                            fontSize: 16,
+                        },
+                        x: "45%",
+                        y: "2%",
+                    },
+                    backgroundColor: "#000E1A",
+                    color: ["#3cefff"],
+                    tooltip: {
+                        formatter(a) {
+                            return a.name + "总仓储数量:" + a.data + "num";
+                        },
+                    },
+                    grid: {
+                        containLabel: true,
+                    },
+                    xAxis: [
+                        {
+                            type: "category",
+                            data: this.info1.aName,
+                            axisTick: {
+                                alignWithLabel: true,
+                            },
+                            nameTextStyle: {
+                                color: "#82b0ec",
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: "#82b0ec",
+                                },
+                            },
+                            axisLabel: {
+                                textStyle: {
+                                    color: "#82b0ec",
+                                },
+                            },
+                        },
+                    ],
+                    yAxis: [
+                        {
+                            type: "value",
+                            axisLabel: {
+                                textStyle: {
+                                    color: "#82b0ec",
+                                },
+                                formatter: "{value} num",
+                            },
+                            splitLine: {
+                                lineStyle: {
+                                    color: "#0c2c5a",
+                                },
+                            },
+                            axisLine: {
+                                show: false,
+                            },
+                        },
+                    ],
+                    series: [
+                        {
+                            name: "总仓储数量",
+                            type: "pictorialBar",
+                            symbolSize: [20, 10],
+                            symbolOffset: [0, -5],
+                            symbolPosition: "end",
+                            z: 12,
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: "top",
+                                    formatter: "{c} num",
+                                },
+                            },
+                            data: this.info1.num,
+                        },
+                        {
+                            type: "bar",
+                            itemStyle: {
+                                normal: {
+                                    opacity: 0.7,
+                                },
+                            },
+                            barWidth: "20",
+                            data: this.info1.num,
+                            markLine: {
+                                silent: true,
+                                symbol: "none",
+                                label: {
+                                    position: "middle",
+                                    formatter: "{b}",
+                                },
+                            },
+                        },
+                        {
+                            type: "effectScatter",
+
+                            silent: true,
+                            tooltip: {
+                                show: false,
+                            },
+                            zlevel: 3,
+
+                            symbolSize: [20, 10],
+                            // symbolOffset: [0, 0],
+                            symbolPosition: "end",
+                            showEffectOn: "render",
+                            rippleEffect: {
+                                brushType: "stroke",
+                                color: "#3cefff",
+                                scale: 4,
+                            },
+                            itemStyle: {
+                                color: "#3cefff",
+                            },
+                            hoverAnimation: true,
+                            data: [0, 0, 0, 0, 0, 0, 0, 0],
+                        },
+                    ],
+                };
+
+                myChart.setOption(option);
+
+                this.v0=false;
+                this.v1=true;
+                this.v2=false;
+                this.v3=false;
+                this.v4=false;
+                this.v5=false;
+                this.v6=false;
+            },
+
+
+            totalBaseMap(){
+
+                this.statistics(2);
+                this.statistics(4);
+                this.statistics(5);
+                this.statistics(6);
+
+
+                var myChart = echarts.init(document.getElementById('baseContain'));
+                var option;
+
+                option = {
+                    backgroundColor: "#3b2e7e",
+                    title: {
+                        text: '商品总体数据分析',
+                        textStyle: {
+                            color: "#ffffff"
+                        },
+                    },
+                    tooltip: {
+                    },
+                    legend: {
+                        data: ['总仓储数量','平均单价','平均仓储量','总体平均单价'],
+                        textStyle: {
+                            color: "#ffffff",
+                        },
+                    },
+                    toolbox: {
+                    },
+                    grid: {
+                        right: '20%'
+                    },
+                    xAxis:[
+                        {
+                            type: 'category',
+                            axisTick: {
+                                alignWithLabel: true
+                            },
+                            data: this.info1.aName,
+                            nameTextStyle: {
+                                color: "#82b0ec",
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: "#82b0ec",
+                                },
+                            },
+                            axisLabel: {
+                                textStyle: {
+                                    color: "#82b0ec",
+                                },
+                            },
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            name: '总仓储数量',
+                            position: 'right',
+                            alignTicks: true,
+                            axisLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: "#30dff3",
+                                }
+                            },
+                            axisLabel: {
+                                formatter: '{value} num'
+                            }
+                        },
+                        {
+                            type: 'value',
+                            name: '平均单价',
+                            position: 'left',
+                            alignTicks: true,
+                            axisLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: "#ff2121"
+                                }
+                            },
+                            axisLabel: {
+                                formatter: '{value} $'
+                            }
+                        },
+                        {
+                            type: 'value',
+                            name: '平均仓储量',
+                            position: 'right',
+                            alignTicks: true,
+                            offset: 80,
+                            axisLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: "#f2be45"
+                                }
+                            },
+                            axisLabel: {
+                                formatter: '{value} num'
+                            }
+                        },
+                        {
+                            type: 'value',
+                            name: '总体平均单价',
+                            position: 'left',
+                            alignTicks: true,
+                            offset: 80,
+                            axisLine: {
+                                show: true,
+                                lineStyle: {
+                                    color: "#1bd1a5"
+                                }
+                            },
+                            axisLabel: {
+                                formatter: '{value} $'
+                            }
+                        },
+
+                    ],
+                    series: [
+                        {
+                            name: '总仓储数量',
+                            type: "bar",
+                            barWidth: "30%",
+                            xAxisIndex: 0,
+                            yAxisIndex: 0,
+                            itemStyle: {
+                                normal: {
+                                    barBorderRadius: 30,
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                        {
+                                            offset: 0,
+                                            color: "#00feff",
+                                        },
+                                        {
+                                            offset: 0.5,
+                                            color: "#027eff",
+                                        },
+                                        {
+                                            offset: 1,
+                                            color: "#0286ff",
+                                        },
+                                    ]),
+                                },
+                            },
+                            zlevel: 11,
+                            data: this.info1.num,
+                        },
+                        {
+                            name: '平均单价',
+                            type: "bar",
+                            barWidth: "30%",
+                            xAxisIndex: 0,
+                            itemStyle: {
+                                normal: {
+                                    barBorderRadius: 30,
+                                    color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                        {
+                                            offset: 0,
+                                            color: "#5470C6",
+                                        },
+                                        {
+                                            offset: 0.5,
+                                            color: "#EE6666",
+                                        },
+                                        {
+                                            offset: 1,
+                                            color: "#91CC75",
+                                        },
+                                    ]),
+                                },
+                            },
+                            zlevel: 11,
+                            yAxisIndex: 1,
+                            data: this.info2.avg,
+                        },
+                        {
+                            name: '平均仓储量',
+                            type: 'line',
+                            smooth: true, //平滑曲线显示
+                            showAllSymbol: true, //显示所有图形。
+                            symbol: "circle", //标记的图形为实心圆
+                            symbolSize: 10, //标记的大小
+                            itemStyle: {
+                                //折线拐点标志的样式
+                                color: "#f2be45",
+                            },
+                            lineStyle: {
+                                color: "#f2be45",
+                            },
+                            areaStyle: {
+                                color: "rgba(5,140,255, 0.2)",
+                            },
+                            yAxisIndex: 2,
+                            data: this.allNumAvgs
+
+                        },
+                        {
+                            name: '总体平均单价',
+                            type: 'line',
+                            smooth: true, //平滑曲线显示
+                            showAllSymbol: true, //显示所有图形。
+                            symbol: "circle", //标记的图形为实心圆
+                            symbolSize: 10, //标记的大小
+                            itemStyle: {
+                                //折线拐点标志的样式
+                                color: "#1bd1a5",
+                            },
+                            lineStyle: {
+                                color: "#1bd1a5",
+                            },
+                            areaStyle: {
+                                color: "rgba(5,140,255, 0.2)",
+                            },
+                            yAxisIndex: 3,
+                            data: this.allPriceAvgs,
+                        },
+                    ]
+                };
+
+
+                myChart.setOption(option);
+
+
+                this.v0=true;
+                this.v1=false;
+                this.v2=false;
+                this.v3=false;
+                this.v4=false;
+                this.v5=false;
+                this.v6=false;
+            },
+
+            //重点 : 必须使用同步调用，异步会造成数据异常
+            async statistics (status) {
+
+                if(status === 0){
+
+                    let response=await axios.get('http://localhost:10110/goods/statisticsAll/'+status+'/'+sessionStorage.getItem('aId'));
+                    this.allNum=response.data.data;
+
+
+                }else if(status === 1){
+
+                    let response=await axios.get('http://localhost:10110/goods/statisticsAll/'+status+'/'+sessionStorage.getItem('aId'));
+                    this.adminNum=response.data.data;
+
+                }else if(status === 2){
+
+                    let response=await axios.get('http://localhost:10110/goods/statisticsAll/'+status+'/'+sessionStorage.getItem('aId'));
+                    this.allPriceAvg=response.data.data;
+
+                    //查询用户个数
+                    let response2=await axios.get('http://localhost:10110/admins/selectAllAdminNum');
+                    let cou = response2.data.data;
+                    //添加信息
+                    for(let i = 0;i<cou;i++){
+                        this.allPriceAvgs[i]=this.allPriceAvg;
+                    }
+
+                }else if(status === 3){
+
+                    let response=await axios.get('http://localhost:10110/goods/statisticsAll/'+status+'/'+sessionStorage.getItem('aId'));
+                    this.adminPriceAvg=response.data.data;
+
+                }else if(status === 4){
+
+                    var arr=[];
+
+                    let response1=await axios.get('http://localhost:10110/goods/statisticsAll/'+status+'/'+sessionStorage.getItem('aId'));
+
+                    if(response1.data.flag){
+
+                        arr=response1.data.data;
+
+                        for(var len1=0;len1<arr.length;len1++){
+
+                            let response2=await axios.get('http://localhost:10110/admins/selectByAid/'+arr[len1].a_id);
+
+                            //向arr里增加新数据使其成万一个完整的对象数组
+                            arr[len1]['a_name']=response2.data.data.aname;
+
+                            //获取arr里的数据
+                            this.info1.aName[len1]=arr[len1]['a_name'];
+                            this.info1.num[len1]=arr[len1]['num'];
+                        }
+
+                    }else{
+                        this.$message({
+                            type: 'info',
+                            message: '数据错误',
+                        });
+                    }
+
+                }else if(status === 5){
+
+                    var arr=[];
+
+                    let response1=await axios.get('http://localhost:10110/goods/statisticsAll/'+status+'/'+sessionStorage.getItem('aId'));
+
+                    if(response1.data.flag){
+
+                        arr=response1.data.data;
+
+                        for(var len1=0;len1<arr.length;len1++){
+
+                            let response2=await axios.get('http://localhost:10110/admins/selectByAid/'+arr[len1].a_id);
+
+                            //向arr里增加新数据使其成万一个完整的对象数组
+                            arr[len1]['a_name']=response2.data.data.aname;
+
+                            //获取arr里的数据
+                            this.info2.aName[len1]=arr[len1]['a_name'];
+                            this.info2.avg[len1]=arr[len1]['avgs'];
+                        }
+
+                    }else{
+                        this.$message({
+                            type: 'info',
+                            message: '数据错误',
+                        });
+                    }
+
+                }else if(status === 6){
+
+                    let response=await axios.get('http://localhost:10110/goods/statisticsAll/'+status+'/'+sessionStorage.getItem('aId'));
+                    this.allNumAvg=response.data.data;
+
+                    //查询用户个数
+                    let response2=await axios.get('http://localhost:10110/admins/selectAllAdminNum');
+                    let cou = response2.data.data;
+                    //添加信息
+                    for(let i = 0;i<cou;i++){
+                        this.allNumAvgs[i]=this.allNumAvg;
+                    }
+
+                }else{
+                    this.$message({
+                        type: 'info',
+                        message: '传参错误',
+                    });
+                }
+
+
+            },
+
+
+            //如果cookie不存在则重新登录
+            async checkCookie(){
+                let response=await axios.post('http://localhost:10110/admins/checkCookieExist');
+                if(response.data.flag === false){
+                    window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+                }
+            },
+
+
+            back(){
+                window.location.href='http://localhost:8080/goods-manage/goods-service/org/example/static/show-goods1.html';
+                this.goodsStatistics = 'false';
+            },
+
+            //不清除session
+            //同步调用
+            async backLogin(){
+                let params = new URLSearchParams();
+                params.append("aId", sessionStorage.getItem('aId'));
+                params.append("status", '0');
+
+                let response=await axios.post('http://localhost:10110/admins/backLogin', params);
+                if (response.data.flag){
+                    this.$message({
+                        type: 'success',
+                        message: '退出登录成功!'
+                    });
+                }else{
+                    this.$message({
+                        type: 'info',
+                        message: response.data.info,
+                    });
+                }
+
+                //返回登录界面
+                window.location.href='http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            },
+
+
+        }
+    });
+</script>
+</html>

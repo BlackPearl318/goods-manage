@@ -1,0 +1,183 @@
+server:
+  port: 10110
+
+
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: admin-checkCookieExist
+          uri: lb://adminserver
+          predicates:
+            - Method=POST
+            - Path=/admins/checkCookieExist
+
+
+        - id: admin-selectAllAdminNum
+          uri: lb://adminserver
+          predicates:
+            - Method=GET
+            - Path=/admins/selectAllAdminNum
+
+
+        - id: admin-updateAdminName
+          uri: lb://adminserver
+          predicates:
+            - Method=PUT
+            - Path=/admins/updateAdminName
+
+
+        - id: admin-updateAdminPhoneNumber
+          uri: lb://adminserver
+          predicates:
+            - Method=PUT
+            - Path=/admins/updateAdminPhoneNumber
+
+
+        - id: admin-updateAdminPassword
+          uri: lb://adminserver
+          predicates:
+            - Method=PUT
+            - Path=/admins/updateAdminPassword
+
+        - id: admin-backAdminPassword
+          uri: lb://adminserver
+          predicates:
+            - Method=PUT
+            - Path=/admins/backAdminPassword
+
+        - id: admin-register
+          uri: lb://adminserver
+          predicates:
+            - Method=POST
+            - Path=/admins/register
+
+
+        - id: admin-backLogin
+          uri: lb://adminserver
+          predicates:
+            - Method=POST
+            - Path=/admins/backLogin
+
+
+        - id: admin-autoLogin
+          uri: lb://adminserver
+          predicates:
+            - Method=POST
+            - Path=/admins/autoLogin
+
+
+        - id: admin-login
+          uri: lb://adminserver
+          predicates:
+            - Method=POST
+            - Path=/admins/login
+
+
+        - id: admin-selectByPhone
+          uri: lb://adminserver
+          predicates:
+            - Method=GET
+            - Path=/admins/selectByPhone/*
+
+
+        - id: admin-selectByAid
+          uri: lb://adminserver
+          predicates:
+            - Method=GET
+            - Path=/admins/selectByAid/*
+
+
+        - id: admin-selectAll
+          uri: lb://adminserver
+          predicates:
+            - Method=GET
+            - Path=/admins/selectAll/*/*
+
+
+
+
+
+
+        - id: goods-select
+          uri: lb://goodserver
+          predicates:
+            - Method=GET
+            - Path=/goods/select/*/*
+
+
+        - id: goods-selectByWhere
+          uri: lb://goodserver
+          predicates:
+            - Method=GET
+            - Path=/goods/selectByWhere
+
+
+        - id: goods-selectAllSort
+          uri: lb://goodserver
+          predicates:
+            - Method=GET
+            - Path=/goods/selectAll/sort/*/*/*
+
+
+        - id: goods-showAllByAdminSort
+          uri: lb://goodserver
+          predicates:
+            - Method=GET
+            - Path=/goods/selectAll/adminSort/*/*/*/*
+
+
+
+        - id: goods-deleteByGId
+          uri: lb://goodserver
+          predicates:
+            - Method=DELETE
+            - Path=/goods/deleteByGId
+
+
+        - id: goods-deleteAllByAid
+          uri: lb://goodserver
+          predicates:
+            - Method=DELETE
+            - Path=/goods/deleteAllByAid
+
+
+        - id: goods-updateByGId
+          uri: lb://goodserver
+          predicates:
+            - Method=PUT
+            - Path=/goods/updateByGId
+
+
+        - id: goods-addOne
+          uri: lb://goodserver
+          predicates:
+            - Method=POST
+            - Path=/goods/addOne
+
+
+        - id: goods-statisticsAll
+          uri: lb://goodserver
+          predicates:
+            - Method=GET
+            - Path=/goods/statisticsAll/*/*
+
+
+        - id: goods-select2
+          uri: lb://goodserver
+          predicates:
+            - Method=GET
+            - Path=/goods/select/*/*/*
+
+
+
+
+
+
+
+
+
+
+
+

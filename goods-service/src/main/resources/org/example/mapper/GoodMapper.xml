@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="org.example.mapper.GoodMapper">
+
+    <resultMap id="base" type="org.example.pojo.Good">
+        <id property="gId" column="g_id"/>
+        <result property="gName" column="g_name"/>
+        <result property="gBrand" column="g_brand"/>
+        <result property="gPrice" column="g_price"/>
+        <result property="gNumber" column="g_number"/>
+        <result property="gFrom" column="g_from"/>
+        <result property="gTime" column="g_time"/>
+        <result property="gStatus" column="g_status"/>
+        <result property="aId" column="a_id"/>
+    </resultMap>
+
+    <insert id="addOne" useGeneratedKeys="true" keyColumn="g_id">
+        insert into good (
+        <trim suffixOverrides=",">
+            <if test="gName != '' and gName != null">
+                g_name,
+            </if>
+            <if test="gBrand != '' and gBrand != null">
+                g_brand,
+            </if>
+            <if test="gPrice != '' and gPrice != null">
+                g_price,
+            </if>
+            <if test="gNumber != '' and gNumber != null">
+                g_number,
+            </if>
+            <if test="gFrom != '' and gFrom != null">
+                g_from,
+            </if>
+            <if test="gTime != null">
+                g_time,
+            </if>
+            <if test="aId != '' and aId != null">
+                a_id
+            </if>
+        </trim>
+        ) values (
+        <trim suffixOverrides=",">
+            <if test="gName != '' and gName != null">
+                #{gName},
+            </if>
+            <if test="gBrand != '' and gBrand != null">
+                #{gBrand},
+            </if>
+            <if test="gPrice != '' and gPrice != null">
+                #{gPrice},
+            </if>
+            <if test="gNumber != '' and gNumber != null">
+                #{gNumber},
+            </if>
+            <if test="gFrom != '' and gFrom != null">
+                #{gFrom},
+            </if>
+            <if test="gTime != null">
+                #{gTime},
+            </if>
+            <if test="aId != '' and aId != null">
+                #{aId}
+            </if>
+        </trim>
+        )
+    </insert>
+
+    <update id="updateByGId">
+        update good
+        <set>
+            <if test="gName != '' and gName != null">
+                g_name=#{gName},
+            </if>
+            <if test="gBrand != '' and gBrand != null">
+                g_brand=#{gBrand},
+            </if>
+            <if test="gPrice != '' and gPrice != null">
+                g_price=#{gPrice},
+            </if>
+            <if test="gNumber != '' and gNumber != null">
+                g_number=#{gNumber},
+            </if>
+            <if test="gFrom != '' and gFrom != null">
+                g_from=#{gFrom},
+            </if>
+            <if test="gTime != null">
+                g_time=#{gTime},
+            </if>
+            <!-- 如果参数全部不存在此语句用于保证SQL语句的正确性-->
+            g_id=#{gId}
+        </set>
+        where g_id=#{gId}
+    </update>
+
+    <delete id="deleteByGId">
+        delete from good where g_id=#{gId}
+    </delete>
+    <delete id="deleteAllByAid">
+        delete from good where a_id=#{aId}
+    </delete>
+
+    <select id="selectAll" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good
+    </select>
+
+    <select id="selectByWhere" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good
+            <trim prefix="where" prefixOverrides="and">
+                <if test="gName != '' and gName != null">
+                    and g_name like concat('%',#{gName},'%')
+                </if>
+                <if test="gBrand != '' and gBrand != null">
+                    and g_brand like concat('%',#{gBrand},'%')
+                </if>
+                <choose>
+                    <when test="gPriceDown != null and gPriceUp != null">
+                        and (g_price between #{gPriceDown} and #{gPriceUp})
+                    </when>
+                    <when test="gPriceDown != null and gPriceUp == null">
+                        and g_price &gt; #{gPriceDown}
+                    </when>
+                    <when test="gPriceDown == null and gPriceUp != null">
+                        and g_price &lt; #{gPriceUp}
+                    </when>
+                    <otherwise/>
+                </choose>
+                <choose>
+                    <when test="gNumberDown != null and gNumberUp != null">
+                        and (g_number between #{gNumberDown} and #{gNumberUp})
+                    </when>
+                    <when test="gNumberDown != null and gNumberUp == null">
+                        and g_number &gt; #{gNumberDown}
+                    </when>
+                    <when test="gNumberDown == null and gNumberUp != null">
+                        and g_number &lt; #{gNumberUp}
+                    </when>
+                    <otherwise/>
+                </choose>
+                <if test="gFrom != '' and gFrom != null">
+                    and g_from like concat('%',#{gFrom},'%')
+                </if>
+                <choose>
+                    <when test="gTimeDown != null and gTimeUp != null">
+                        and (g_time between #{gTimeDown} and #{gTimeUp})
+                    </when>
+                    <when test="gTimeDown != null and gTimeUp == null">
+                        and g_time &gt; #{gTimeDown}
+                    </when>
+                    <when test="gTimeDown == null and gTimeUp != null">
+                        and g_time &lt; #{gTimeUp}
+                    </when>
+                    <otherwise/>
+                </choose>
+            </trim>
+    </select>
+
+    <select id="selectByAid" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good where a_id=#{aId}
+    </select>
+
+
+
+    <select id="gNumberSumAll" resultType="java.lang.Integer">
+        select sum(g_number) from good;
+    </select>
+    <select id="gNumberSumByAid" resultType="java.lang.Integer">
+        select sum(g_number) from good where a_id=#{aId} group by a_id
+    </select>
+    <select id="gPriceAvgAll" resultType="java.math.BigDecimal">
+        select avg(g_price) from good;
+    </select>
+    <select id="gPriceAvgByAid" resultType="java.math.BigDecimal">
+        select avg(g_price) from good where a_id=#{aId} group by a_id
+    </select>
+    <select id="gNumberSumByAidGroup" resultType="java.util.Map">
+        select a_id, sum(g_number) num from good group by a_id
+    </select>
+    <select id="gPriceAvgByAidGroup" resultType="java.util.Map">
+        select a_id, avg(g_price) avgs from good group by a_id
+    </select>
+
+
+
+    <select id="selectAllByNumberAsc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good order by g_number asc
+    </select>
+    <select id="selectAllByNumberDesc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good order by g_number desc
+    </select>
+    <select id="selectAllByPriceAsc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good order by g_price asc
+    </select>
+    <select id="selectAllByPriceDesc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good order by g_price desc
+    </select>
+    <select id="selectAllByTimeAsc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good order by g_time asc
+    </select>
+    <select id="selectAllByTimeDesc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good order by g_time desc
+    </select>
+
+
+
+    <select id="selectAllByAdminNumberAsc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good where a_id=#{aId} order by g_number asc
+    </select>
+    <select id="selectAllByAdminNumberDesc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good where a_id=#{aId} order by g_number desc
+    </select>
+    <select id="selectAllByAdminPriceAsc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good where a_id=#{aId} order by g_price asc
+    </select>
+    <select id="selectAllByAdminPriceDesc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good where a_id=#{aId} order by g_price desc
+    </select>
+    <select id="selectAllByAdminTimeAsc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good where a_id=#{aId} order by g_time asc
+    </select>
+    <select id="selectAllByAdminTimeDesc" resultMap="base">
+        select g_id,g_name,g_brand,g_price,g_number,g_from,g_time,g_status,a_id from good where a_id=#{aId} order by g_time desc
+    </select>
+
+</mapper>

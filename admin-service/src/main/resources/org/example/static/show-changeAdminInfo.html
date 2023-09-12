@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>用户信息</title>
+
+    <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
+
+    <style>
+        .text {
+            font-size: 14px;
+        }
+
+        .item {
+            margin-bottom: 18px;
+        }
+
+        .clearfix:before,
+        .clearfix:after {
+            display: table;
+            content: "";
+        }
+        .clearfix:after {
+            clear: both
+        }
+
+        .el-header {
+            background-color: #f0f9eb;
+            color: #333;
+            line-height: 60px;
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            box-shadow: 0 0 5px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-aside {
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            box-shadow: 0 0 10px #eee;
+            border-radius: 10px;
+            display: block;
+            color: #333;
+        }
+
+        .el-menu{
+            text-transform: uppercase;
+            transition: 0.5s;
+            background-size: 200% auto;
+            box-shadow: 0 0 20px #eee;
+            border-radius: 10px;
+            display: block;
+            color: #333;
+        }
+
+        .el-input{
+            transition: 0.5s;
+            box-shadow: 0 0 5px #eee;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-form{
+            transition: 0.5s;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .el-avatar{
+            transition: 0.5s;
+            background-size: 200% auto;
+            box-shadow: 0 0 20px #eee;
+            display: block;
+            color: #333;
+        }
+
+        .el-card{
+            background: #bacac6;
+            position: relative;
+            width: 60%;
+            transition: 0.5s;
+            background-size: 200% auto;
+            border-radius: 15px;
+            display: block;
+        }
+
+        img{
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+
+    </style>
+</head>
+
+
+<body>
+
+<img src="http://localhost:8080/goods-manage/admin-service/org/example/img/background3.png"/>
+
+<div id="changeAdminInfo">
+
+    <el-container style="height: 100%;">
+        <el-aside width="200px" style="background-color: rgb(238, 241, 246)">
+            <el-menu :default-openeds="['1', '2','3','4']"
+                     background-color="#48505a"
+                     text-color="#fff"
+                     active-text-color="#ffd04b">
+                <el-menu-item index="5">
+                    <i class="el-icon-s-home"></i>
+                    <span slot="title" @click="backLogin">返回登录界面</span>
+                </el-menu-item>
+                <el-submenu index="2">
+                    <template slot="title"><i class="el-icon-back"></i>返回</template>
+                    <el-menu-item-group>
+                        <el-menu-item index="2-1" @click="back">返回上一页</el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group>
+                        <el-menu-item index="2-2" @click="backGoods">返回仓库管理</el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+                <el-submenu index="4">
+                    <template slot="title"><i class="el-icon-s-custom"></i>用户详情</template>
+                    <el-menu-item index="4-1" @click="showCard">用户信息</el-menu-item>
+                </el-submenu>
+                <el-submenu index="1">
+                    <template slot="title"><i class="el-icon-edit"></i>编辑</template>
+                    <el-menu-item-group>
+                        <template slot="title">用户信息编辑</template>
+                        <el-menu-item index="1-1" @click="clickV1">修改用户名</el-menu-item>
+                        <el-menu-item index="1-2" @click="clickV2">更换绑定手机</el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group>
+                        <template slot="title">密码编辑</template>
+                        <el-menu-item index="1-3" @click="clickV3">修改密码</el-menu-item>
+                    </el-menu-item-group>
+                    <el-menu-item-group>
+                        <el-menu-item index="1-4">
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                        </el-menu-item>
+                        <el-menu-item index="1-5">
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                            <i class="el-icon-minus"></i>
+                        </el-menu-item>
+                    </el-menu-item-group>
+                </el-submenu>
+            </el-menu>
+        </el-aside>
+
+        <el-container style="height: 100%;">
+
+            <el-header style="text-align: right; font-size: 15px">
+
+                <el-menu class="el-menu-demo"
+                         mode="horizontal"
+                         text-color="#fff"
+                         background-color="#545c64"
+                         active-text-color="#ffd04b">
+
+                    <i class="el-icon-s-tools" style="margin-right: 15px;color: #f0f9eb"></i>
+                    <i class="el-icon-minus" style="margin-right: 15px;color: #f0f9eb"></i>
+                    <span style="color: #f0f9eb">当前用户：{{admin.aName}}</span>
+                    <i class="el-icon-user-solid" style="margin-right: 15px;color: #f0f9eb"></i>
+                    <i class="el-icon-minus" style="margin-right: 15px;color: #f0f9eb"></i>
+
+                </el-menu>
+
+            </el-header>
+
+
+
+            <el-main>
+
+                <!-- 控制表单是否可见 不可以使用 v-if 需要使用 v-show 因为 v-if 会使表单验证失效 v-show不会-->
+                <!-- 使用多张表单使用同一个规则rules时需要绑定不同的ref，否则表单校验的返回值一直为true-->
+                <!-- 修改用户名-->
+                <el-form :model="adminChange1" status-icon :rules="adminChangeRules" ref="adminChange1" v-show="v1" style="position: relative;width: 50%">
+
+                    <el-form-item prop="aName" :label-width="formLabelWidth">
+                        <div class="demo-type">
+                            <div align="center">
+                                <el-avatar icon="el-icon-user-solid"></el-avatar>
+                            </div>
+                        </div>
+                        <el-input placeholder="请输入新的用户名" v-model="adminChange1.aName" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth">
+                        <el-progress :percentage="processNum" status="success"></el-progress>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth">
+                        <el-button type="primary" @click="changeInfo('adminChange1')" style="
+                        width: 48.8%;
+                        background-image: linear-gradient(to right, #70e1f5 0%, #ffd194  51%, #70e1f5  100%);
+                        text-align: center;
+                        text-transform: uppercase;
+                        transition: 0.5s;
+                        background-size: 200% auto;
+                        color: white;
+                        box-shadow: 0 0 10px #eee;
+                        border-radius: 10px;">修 改</el-button>
+                        <el-button @click="changeCancel" style="
+                        width: 48.8%;
+                        background-image: linear-gradient(to right, #83a4d4 0%, #b6fbff  51%, #83a4d4  100%);
+                        text-align: center;
+                        text-transform: uppercase;
+                        transition: 0.5s;
+                        background-size: 200% auto;
+                        color: white;
+                        box-shadow: 0 0 10px #eee;
+                        border-radius: 10px;">取 消</el-button>
+                    </el-form-item>
+                </el-form>
+
+
+                <!-- 修改绑定手机-->
+                <el-form :model="adminChange2" status-icon :rules="adminChangeRules" ref="adminChange2" v-show="v2" style="position: relative;width: 50%">
+                    <el-form-item prop="aPhoneOld" :label-width="formLabelWidth">
+                        <div class="demo-type">
+                            <div align="center">
+                                <el-avatar icon="el-icon-phone"></el-avatar>
+                            </div>
+                        </div>
+                        <el-input placeholder="请输入旧的绑定手机号码" v-model="adminChange2.aPhoneOld" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="aPhone" :label-width="formLabelWidth">
+                        <el-input placeholder="请输入新的绑定手机号码" v-model="adminChange2.aPhone" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth">
+                        <el-progress :percentage="processNum" status="success"></el-progress>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth">
+                        <el-button type="primary" @click="changeInfo('adminChange2')" style="
+                        width: 48.8%;
+                        background-image: linear-gradient(to right, #70e1f5 0%, #ffd194  51%, #70e1f5  100%);
+                        text-align: center;
+                        text-transform: uppercase;
+                        transition: 0.5s;
+                        background-size: 200% auto;
+                        color: white;
+                        box-shadow: 0 0 10px #eee;
+                        border-radius: 10px;">修 改</el-button>
+                        <el-button @click="changeCancel" style="
+                        width: 48.8%;
+                        background-image: linear-gradient(to right, #83a4d4 0%, #b6fbff  51%, #83a4d4  100%);
+                        text-align: center;
+                        text-transform: uppercase;
+                        transition: 0.5s;
+                        background-size: 200% auto;
+                        color: white;
+                        box-shadow: 0 0 10px #eee;
+                        border-radius: 10px;">取 消</el-button>
+                    </el-form-item>
+                </el-form>
+
+
+                <!-- 修改密码-->
+                <el-form :model="adminChange3" status-icon :rules="adminChangeRules" ref="adminChange3" v-show="v3" style="position: relative;width: 50%">
+                    <el-form-item prop="aOldPassword" :label-width="formLabelWidth">
+                        <div class="demo-type">
+                            <div align="center">
+                                <el-avatar icon="el-icon-upload"></el-avatar>
+                            </div>
+                        </div>
+                        <el-input placeholder="请输入旧的密码" v-model="adminChange3.aOldPassword" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="aPassword1" :label-width="formLabelWidth">
+                        <el-input placeholder="请输入新的密码" v-model="adminChange3.aPassword1" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item prop="aPassword2" :label-width="formLabelWidth">
+                        <el-input placeholder="请确认您的密码" v-model="adminChange3.aPassword2" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth">
+                        <el-progress :percentage="processNum" status="success"></el-progress>
+                    </el-form-item>
+                    <el-form-item :label-width="formLabelWidth">
+                        <el-button type="primary" @click="changeInfo('adminChange3')" style="
+                        width: 48.8%;
+                        background-image: linear-gradient(to right, #70e1f5 0%, #ffd194  51%, #70e1f5  100%);
+                        text-align: center;
+                        text-transform: uppercase;
+                        transition: 0.5s;
+                        background-size: 200% auto;
+                        color: white;
+                        box-shadow: 0 0 10px #eee;
+                        border-radius: 10px;">修 改</el-button>
+                        <el-button @click="changeCancel" style="
+                        width: 48.8%;
+                        background-image: linear-gradient(to right, #83a4d4 0%, #b6fbff  51%, #83a4d4  100%);
+                        text-align: center;
+                        text-transform: uppercase;
+                        transition: 0.5s;
+                        background-size: 200% auto;
+                        color: white;
+                        box-shadow: 0 0 10px #eee;
+                        border-radius: 10px;">取 消</el-button>
+                    </el-form-item>
+                </el-form>
+
+
+
+
+                <el-card class="box-card" v-show="v4">
+                    <div slot="header" class="clearfix">
+                        <span>用户详情</span>
+                    </div>
+                    <div class="text item">
+                        <i class="el-icon-ice-tea"></i> 账 号 : {{admin.account}}
+                    </div>
+                    <div class="text item">
+                        <i class="el-icon-phone"></i> 密 码 : {{admin.aPassword}}
+                    </div>
+                    <div class="text item">
+                        <i class="el-icon-thumb"></i> 用 户 名 : {{admin.aName}}
+                    </div>
+                    <div class="text item">
+                        <i class="el-icon-timer"></i> 账 号 注 册 时 间 : {{admin.aTime}}
+                    </div>
+                </el-card>
+
+
+
+            </el-main>
+
+
+
+        </el-container>
+
+
+
+    </el-container>
+
+
+
+</div>
+
+
+
+
+
+</body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://unpkg.com/element-ui/lib/index.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+
+
+<script>
+    //允许跨域请求使用凭证
+    axios.defaults.withCredentials=true;
+
+    var vu = new Vue({
+        el:'#changeAdminInfo',
+        data:{
+            activeName: '',
+
+            admin:{
+                aId:sessionStorage.getItem("aId"),
+                account: sessionStorage.getItem('account'),
+                aPassword: '******',
+                aName: sessionStorage.getItem('aName'),
+                aPhone: sessionStorage.getItem('aPhone'),
+                aTime:sessionStorage.getItem('aTime'),
+            },
+
+            changeViewVisible:'false',
+
+            processNum:100,
+            adminChange1:{
+                aName: '',
+            },
+            adminChange2:{
+                aPhone: '',
+                aPhoneOld:'',
+            },
+            adminChange3:{
+                aOldPassword:'',
+                aPassword1: '',
+                aPassword2: '',
+            },
+            v1:false,
+            v2:false,
+            v3:false,
+            v4:true,
+            mark:1,
+
+            adminChangeRules:{
+                aName: [{
+                    required: true, message: '请输入新的用户名'
+                },{
+                    pattern: /^[^0]{1,6}$/, message: '用户名过长'
+                }],
+                aOldPassword:[{
+                    required: true, message: '请输入旧密码'
+                }, {
+                    pattern: /^[0-9a-zA-Z]{6,9}$/, message: '密码为字母和数字组合长度为6-9位'
+                }],
+                aPassword1: [{
+                    required: true, message: '请输入新密码'
+                }, {
+                    pattern: /^[0-9a-zA-Z]{6,9}$/, message: '密码为字母和数字组合长度为6-9位'
+                }],
+                aPassword2: [{
+                    required: true, message: '请确认新密码'
+                }, {
+                    pattern: /^[0-9a-zA-Z]{6,9}$/, message: '密码为字母和数字组合长度为6-9位'
+                }],
+                aPhoneOld:[{
+                    required: true, message: '请输入旧手机号'
+                }, {
+                    pattern: /^[1][3,4,5,5,7,9][0-9]{9}$/, message: '请输入正确的手机号'
+                }],
+                aPhone:[{
+                    required: true, message: '请输入新手机号'
+                }, {
+                    pattern: /^[1][3,4,5,5,7,9][0-9]{9}$/, message: '请输入正确的手机号'
+                }]
+            }
+
+        },
+
+        created(){
+            if(this.checkCookie() === false){
+                window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            }
+            this.changeViewVisible=sessionStorage.getItem('changeViewVisible')
+            if(this.changeViewVisible === 'false'){
+                window.location.href = 'http://localhost:8080/goods-manage/goods-service/org/example/static/show-goods1.html';
+            }else if(this.changeViewVisible === 'true'){
+                this.changeViewVisible = 'false';
+            }else{
+                window.location.href = 'http://localhost:8080/goods-manage/goods-service/org/example/static/show-goods1.html';
+            }
+        },
+
+        methods:{
+            //如果cookie不存在则重新登录
+            async checkCookie(){
+                let response=await axios.post('http://localhost:10110/admins/checkCookieExist');
+                if(response.data.flag === false){
+                    window.location.href = 'http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+                }
+            },
+
+            clickV1(){
+                this.v1=true;
+                this.v2=false;
+                this.v3=false;
+                this.v4=false;
+                this.mark=1;
+                this.changeCancel();
+            },
+            clickV2(){
+                this.v1=false;
+                this.v2=true;
+                this.v3=false;
+                this.v4=false;
+                this.mark=2;
+                this.changeCancel();
+            },
+            clickV3(){
+                this.v1=false;
+                this.v2=false;
+                this.v3=true;
+                this.v4=false;
+                this.mark=3;
+                this.changeCancel();
+            },
+            showCard(){
+                this.v1=false;
+                this.v2=false;
+                this.v3=false;
+                this.v4=true;
+                this.changeCancel();
+            },
+            async changeInfo(formName){
+
+                let params = new URLSearchParams();
+                params.append("aId", sessionStorage.getItem("aId"));
+
+                //修改用户名
+                if(this.mark == 1){
+
+                    params.append("aName", this.adminChange1.aName);
+
+                    this.$refs[formName].validate(async (valid) => {
+
+                        if (valid) {
+
+                            let response = await axios.put('http://localhost:10110/admins/updateAdminName', params);
+
+                            if (response.data.flag) {
+                                this.$message({
+                                    type: 'success',
+                                    message: response.data.info,
+                                });
+                                //更新sessionStorage
+                                sessionStorage.setItem("aName", response.data.data.aname);
+                            } else {
+                                this.$message({
+                                    type: 'info',
+                                    message: response.data.info,
+                                });
+                            }
+                            this.adminChange1.aName = '';
+                            //清空进度条
+                            this.processNum = 0;
+
+                        } else {
+                            this.$message.error("请完善相关信息");
+                            return false;
+                        }
+                    });
+
+                }else if(this.mark == 2){//修改绑定手机
+
+                    params.append("oldPhoneNumber", this.adminChange2.aPhoneOld);
+                    params.append("newPhoneNumber", this.adminChange2.aPhone);
+
+                    this.$refs[formName].validate(async (valid) => {
+
+                        if (valid) {
+
+                            let response = await axios.put('http://localhost:10110/admins/updateAdminPhoneNumber', params);
+
+                            if (response.data.flag) {
+                                this.$message({
+                                    type: 'success',
+                                    message: response.data.info,
+                                });
+                                //更新sessionStorage
+                                sessionStorage.setItem("aPhone", response.data.data.aphone);
+                            } else {
+                                this.$message({
+                                    type: 'info',
+                                    message: response.data.info,
+                                });
+                            }
+                            this.adminChange2.aPhoneOld = '';
+                            this.adminChange2.aPhone = '';
+                            //清空进度条
+                            this.processNum = 0;
+
+                        } else {
+                            this.$message.error("请完善相关信息");
+                            return false;
+                        }
+                    });
+
+
+                }else if(this.mark == 3){//修改密码
+
+                    params.append("oldPassword", this.adminChange3.aOldPassword);
+                    params.append("newPassword", this.adminChange3.aPassword1);
+                    params.append("newPassword2", this.adminChange3.aPassword2);
+
+                    this.$refs[formName].validate(async (valid) => {
+
+                        if (valid) {
+
+                            if (this.adminChange3.aPassword1 !== this.adminChange3.aPassword2) {
+                                this.$message.error("两次密码不一致！请重新输入");
+                                this.adminChange3.aPassword1 = '';
+                                this.adminChange3.aPassword2 = '';
+                                return false;
+                            } else {
+
+                                let response = await axios.put('http://localhost:10110/admins/updateAdminPassword', params);
+
+                                if (response.data.flag) {
+                                    this.$message({
+                                        type: 'success',
+                                        message: response.data.info,
+                                    });
+                                    //更新sessionStorage
+                                    sessionStorage.setItem("aPassword", response.data.data.apassword);
+                                } else {
+                                    this.$message({
+                                        type: 'info',
+                                        message: response.data.info,
+                                    });
+                                }
+
+                                this.adminChange3.aOldPassword = '';
+                                this.adminChange3.aPassword1 = '';
+                                this.adminChange3.aPassword2 = '';
+                                //清空进度条
+                                this.processNum = 0;
+
+                            }
+
+                        } else {
+                            this.$message.error("请完善相关信息");
+                            return false;
+                        }
+                    });
+
+
+                }else{
+                    this.$message.error("出错了....");
+                    return false;
+                }
+            },
+
+            changeCancel(){
+                this.adminChange2.aPhoneOld='';
+                this.adminChange2.aPhone='';
+                this.adminChange3.aOldPassword='';
+                this.adminChange3.aPassword1='';
+                this.adminChange3.aPassword2='';
+                this.adminChange1.aName='';
+            },
+
+            back(){
+
+                this.changeViewVisible='false';
+                window.location.href='http://localhost:8080/goods-manage/goods-service/org/example/static/show-goods1.html';
+
+            },
+            backGoods(){
+                this.changeViewVisible='false';
+                window.location.href='http://localhost:8080/goods-manage/goods-service/org/example/static/show-goods1.html';
+            },
+
+            //不清除session
+            //同步调用
+            async backLogin(){
+                let params = new URLSearchParams();
+                params.append("aId", sessionStorage.getItem('aId'));
+                params.append("status", '0');
+
+                let response=await axios.post('http://localhost:10110/admins/backLogin', params);
+                if (response.data.flag){
+                    this.$message({
+                        type: 'success',
+                        message: '退出登录成功!'
+                    });
+                }else{
+                    this.$message({
+                        type: 'info',
+                        message: response.data.info,
+                    });
+                }
+
+                //返回登录界面
+                window.location.href='http://localhost:8080/goods-manage/admin-service/org/example/static/show-admin.html';
+            },
+
+        }
+    });
+</script>
+</html>

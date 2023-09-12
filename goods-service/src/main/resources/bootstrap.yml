@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: goodserver
+  cloud:
+    loadbalancer:
+      nacos:
+        enabled: true #开启loadbalancer的负载均衡
+    nacos:
+      server-addr: localhost:8848 #nacos地址
+      config:
+        file-extension: yaml #文件后缀名
+      discovery:
+        cluster-name: Local #设置集群名
